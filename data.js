@@ -35,6 +35,32 @@ window.PORTFOLIO = {
   ],
   "projects": [
     {
+      "id": "installation-sheng",
+      "title": "生",
+      "en": "Born",
+      "category": "personal",
+      "year": "装置 / 2024",
+      "type": "个人创作 / Personal",
+      "images": [
+        "assets/works/installation/installation-01.png"
+      ],
+      "description": "以树根为主体，悬挂彩色玻璃水滴——树根曾被折断、被遗弃，却仍以顽强的生命力再次生长，每一颗玻璃水滴都是绝境中迸发出的色彩与希望，讲述生命绝处逢生的力量。",
+      "descriptionEn": "Using a tree root as the core, with suspended colored glass drops. The root, once broken and discarded, still grows back with tenacious vitality. Each glass drop is a burst of color and hope from desperate circumstances — telling the power of life reborn from adversity."
+    },
+    {
+      "id": "inseparable-bond",
+      "title": "剪不断的纽带",
+      "en": "An Inseparable Bond",
+      "category": "personal",
+      "year": "2016—2017",
+      "type": "绘画 / Painting",
+      "images": [
+        "assets/works/inseparable-bond.jpg"
+      ],
+      "description": "《剪不断的纽带》入选鲁迅美术学院“创新・创业”优秀作品展，获二等奖。展览地点为鲁迅美术学院美术馆（沈阳）。",
+      "descriptionEn": "An Inseparable Bond was selected for the Innovation and Entrepreneurship Exhibition at Lu Xun Academy of Fine Arts and received Second Prize. The exhibition took place at the academy’s art museum in Shenyang."
+    },
+    {
       "id": "returning-swallows",
       "title": "归燕系列",
       "en": "Returning Swallows",
@@ -49,17 +75,39 @@ window.PORTFOLIO = {
       "descriptionEn": "Returning Swallows received an Excellence Award for target universities in Guangdong in the 2020 Xu Qinsong Creation Award. Returning Swallows 3 was selected for the 7th Guangdong Contemporary Oil Painting Exhibition at Jiangmen Museum of Art."
     },
     {
-      "id": "inseparable-bond",
-      "title": "剪不断的纽带",
-      "en": "An Inseparable Bond",
-      "category": "personal",
-      "year": "2016—2017",
-      "type": "绘画 / Painting",
+      "id": "heritage-zhi-xian-wei",
+      "title": "纸纤维艺术",
+      "en": "Paper Fiber Art",
+      "category": "craft",
+      "year": "实践记录",
+      "type": "非遗手工 / Heritage Crafts",
       "images": [
-        "assets/works/inseparable-bond.jpg"
+        "assets/works/craft/zhi-xian-wei/zhi-xian-wei-01.jpg",
+        "assets/works/craft/zhi-xian-wei/zhi-xian-wei-02.jpg"
       ],
-      "description": "《剪不断的纽带》入选鲁迅美术学院“创新・创业”优秀作品展，获二等奖。展览地点为鲁迅美术学院美术馆（沈阳）。",
-      "descriptionEn": "An Inseparable Bond was selected for the Innovation and Entrepreneurship Exhibition at Lu Xun Academy of Fine Arts and received Second Prize. The exhibition took place at the academy’s art museum in Shenyang."
+      "description": "纸纤维艺术，以纸为媒介进行编织、堆叠、塑形，探索传统材料的当代表达。",
+      "descriptionEn": "Paper fiber art uses paper as a medium for weaving, layering, and shaping, exploring contemporary expressions of traditional materials."
+    },
+    {
+      "id": "heritage-zha-ran",
+      "title": "扎染",
+      "en": "Tie-Dye",
+      "category": "craft",
+      "year": "实践记录",
+      "type": "非遗手工 / Heritage Crafts",
+      "images": [
+        "assets/works/craft/zha-ran/zha-ran-08.jpg",
+        "assets/works/craft/zha-ran/zha-ran-01.jpg",
+        "assets/works/craft/zha-ran/zha-ran-02.jpg",
+        "assets/works/craft/zha-ran/zha-ran-03.jpg",
+        "assets/works/craft/zha-ran/zha-ran-04.jpg",
+        "assets/works/craft/zha-ran/zha-ran-05.jpg",
+        "assets/works/craft/zha-ran/zha-ran-06.jpg",
+        "assets/works/craft/zha-ran/zha-ran-07.jpg",
+        "assets/works/craft/zha-ran/zha-ran-09.jpg"
+      ],
+      "description": "扎染，传统印染工艺，通过捆扎、浸泡、拆线等工序，在织物上呈现自然晕染的纹样效果。",
+      "descriptionEn": "Tie-dye is a traditional dyeing technique that creates naturally diffused patterns on fabric through tying, soaking, and untying."
     },
     {
       "id": "still-life",
@@ -88,15 +136,83 @@ window.PORTFOLIO = {
       "descriptionEn": "Reflections, Corridors of Time and two other works were selected for the first Yiqilai Artist of the Year National Touring Exhibition and received the 2015 Artist of the Year Award. The exhibition was held at Zhang Xiong Art Museum in Xiamen."
     },
     {
-      "id": "heritage-workshop",
-      "title": "非遗手工 · 教学与实践",
-      "en": "Heritage Craft & Education",
+      "id": "heritage-qia-si-fa-lang",
+      "title": "掐丝珐琅 · 螺钿",
+      "en": "Cloisonné & Mother-of-Pearl Inlay",
       "category": "craft",
       "year": "实践记录",
       "type": "非遗手工 / Heritage Crafts",
-      "images": [],
-      "description": "曾多次参与非物质文化遗产项目企业实践，实践单位包括广东非遗梦文化产业有限公司等企业；担任学院“教师大讲堂”美术（非遗手工课）授课教师，为学院教师提供非遗教学培训。关注传统手工技艺与数字媒体技术的结合。具体作品图待补充。",
-      "descriptionEn": "I have participated in multiple enterprise-based intangible cultural heritage projects, including practice at Guangdong Intangible Cultural Heritage Dream Cultural Industry Co., Ltd. I also taught heritage crafts in the college’s Faculty Lecture Series, providing training for fellow teachers. This practice informs my interest in traditional craft and digital media. Project images are forthcoming."
+      "images": [
+        "assets/works/craft/qia-si-fa-lang/qia-si-fa-lang-01.jpg"
+      ],
+      "description": "掐丝珐琅与螺钿工艺，前者以金属丝掐出图案再填色烧制，后者将贝壳薄片嵌入器物表面形成华美装饰。",
+      "descriptionEn": "Cloisonné uses metal wire to form patterns filled with enamel; mother-of-pearl inlay creates ornate decoration by embedding thin shell pieces into surfaces."
+    },
+    {
+      "id": "heritage-chan-hua",
+      "title": "缠花",
+      "en": "Silk Flower Craft",
+      "category": "craft",
+      "year": "实践记录",
+      "type": "非遗手工 / Heritage Crafts",
+      "images": [
+        "assets/works/craft/chan-hua/chan-hua-01.jpg",
+        "assets/works/craft/chan-hua/chan-hua-02.jpg"
+      ],
+      "description": "缠花，以蚕丝缠绕纸板造型，制作出仿真花朵，多用于传统头饰与节庆装饰。",
+      "descriptionEn": "Silk flower craft wraps silk threads around cardboard shapes to create lifelike flowers, traditionally used for hair ornaments and festive decorations."
+    },
+    {
+      "id": "heritage-zhu-xiu",
+      "title": "珠绣",
+      "en": "Bead Embroidery",
+      "category": "craft",
+      "year": "实践记录",
+      "type": "非遗手工 / Heritage Crafts",
+      "images": [
+        "assets/works/craft/zhu-xiu/zhu-xiu-01.jpg"
+      ],
+      "description": "珠绣，以各色珠子在织物上穿绣图案，珠光流转，常用于服饰、包袋及装饰画。",
+      "descriptionEn": "Bead embroidery stitches colorful beads onto fabric to create shimmering patterns, commonly used for clothing, bags, and decorative art."
+    },
+    {
+      "id": "heritage-mu-ban-nian-hua",
+      "title": "木版年画",
+      "en": "Woodblock New Year Prints",
+      "category": "craft",
+      "year": "实践记录",
+      "type": "非遗手工 / Heritage Crafts",
+      "images": [
+        "assets/works/craft/mu-ban-nian-hua/mu-ban-nian-hua-01.jpg"
+      ],
+      "description": "木版年画，以梨木雕刻版、套色印刷，是中国传统年节文化中不可或缺的艺术形式。",
+      "descriptionEn": "Woodblock New Year prints are carved on pear wood and printed in multiple colors, forming an indispensable art form in Chinese traditional festival culture."
+    },
+    {
+      "id": "heritage-tao-yi",
+      "title": "陶艺",
+      "en": "Pottery",
+      "category": "craft",
+      "year": "实践记录",
+      "type": "非遗手工 / Heritage Crafts",
+      "images": [
+        "assets/works/craft/tao-yi/tao-yi-01.jpg"
+      ],
+      "description": "陶艺，手拉坯、塑形、施釉、烧制，从泥土到器物的传统造物技艺。",
+      "descriptionEn": "Pottery — throwing, shaping, glazing, and firing — the traditional craft of transforming clay into vessels."
+    },
+    {
+      "id": "heritage-zhi-jiang-hua",
+      "title": "纸浆画",
+      "en": "Paper Pulp Painting",
+      "category": "craft",
+      "year": "实践记录",
+      "type": "非遗手工 / Heritage Crafts",
+      "images": [
+        "assets/works/craft/zhi-jiang-hua/zhi-jiang-hua-01.jpg"
+      ],
+      "description": "纸浆画，以废纸回收打浆、染色后堆积成画，兼具环保性与独特的肌理质感。",
+      "descriptionEn": "Paper pulp painting recycles waste paper into dyed pulp that is layered into artworks, with unique textural quality and eco-friendliness."
     },
     {
       "id": "in-the-mirror",
@@ -214,6 +330,305 @@ window.PORTFOLIO = {
       ],
       "description": "《小人儿》，邓全颖作品。",
       "descriptionEn": "Little Person, a work by Quanying Deng."
+    },
+    {
+      "id": "heritage-bo-li-hua",
+      "title": "玻璃画",
+      "en": "Glass Painting",
+      "category": "craft",
+      "year": "实践记录",
+      "type": "非遗手工 / Heritage Crafts",
+      "images": [
+        "assets/works/craft/bo-li-hua/bo-li-hua-01.jpg"
+      ],
+      "description": "玻璃画，以玻璃为载体进行绘画创作，光线穿透时呈现独特的光影效果，是一种兼具装饰性与艺术性的传统工艺。",
+      "descriptionEn": "Glass painting is a traditional craft where paint on glass creates unique light-and-shadow effects when backlit."
+    },
+    {
+      "id": "heritage-ya-hua-feng-ling",
+      "title": "压花风铃",
+      "en": "Pressed Flower Wind Chime",
+      "category": "craft",
+      "year": "实践记录",
+      "type": "非遗手工 / Heritage Crafts",
+      "images": [
+        "assets/works/craft/ya-hua-feng-ling/ya-hua-feng-ling-01.jpg"
+      ],
+      "description": "压花风铃，将自然界的花草压制成干花，配以羽毛和珠串，悬挂时随风摇曳发出清脆声响，是自然与手工结合的治愈系作品。",
+      "descriptionEn": "A pressed flower wind chime combines dried natural flowers with feathers and beads, creating a healing blend of nature and handcraft that tinkles in the breeze."
+    },
+    {
+      "id": "photo-si-xu",
+      "title": "思绪",
+      "en": "Thoughts",
+      "category": "photo",
+      "year": "摄影",
+      "type": "摄影 / Photography",
+      "images": [
+        "assets/works/photo/si-xu/si-xu-01.jpg"
+      ],
+      "description": "思绪漂浮的瞬间，被镜头轻轻定格。",
+      "descriptionEn": "A fleeting thought, gently held by the lens."
+    },
+    {
+      "id": "photo-yue-se",
+      "title": "月色",
+      "en": "Moonlight",
+      "category": "photo",
+      "year": "摄影",
+      "type": "摄影 / Photography",
+      "images": [
+        "assets/works/photo/yue-se/yue-se-01.jpg"
+      ],
+      "description": "月光倾泻，夜晚有了另一种温柔。",
+      "descriptionEn": "Moonlight pours down, lending the night a different tenderness."
+    },
+    {
+      "id": "photo-gui-chao",
+      "title": "归巢",
+      "en": "Coming Home",
+      "category": "photo",
+      "year": "摄影",
+      "type": "摄影 / Photography",
+      "images": [
+        "assets/works/photo/gui-chao/gui-chao-01.jpg"
+      ],
+      "description": "归巢的身影，是最安静也最动人的画面。",
+      "descriptionEn": "The figure returning home, quiet and moving all at once."
+    },
+    {
+      "id": "photo-yin",
+      "title": "印",
+      "en": "Impression",
+      "category": "photo",
+      "year": "摄影",
+      "type": "摄影 / Photography",
+      "images": [
+        "assets/works/photo/yin/yin-01.jpg"
+      ],
+      "description": "光影留下的痕迹，是时间盖下的印章。",
+      "descriptionEn": "Traces left by light and shadow — time’s own stamp."
+    },
+    {
+      "id": "photo-mu-ma",
+      "title": "木马系列",
+      "en": "Carousel Series",
+      "category": "photo",
+      "year": "摄影",
+      "type": "摄影 / Photography",
+      "images": [
+        "assets/works/photo/mu-ma/mu-ma-01.jpg",
+        "assets/works/photo/mu-ma/mu-ma-02.jpg",
+        "assets/works/photo/mu-ma/mu-ma-03.jpg",
+        "assets/works/photo/mu-ma/mu-ma-04.jpg"
+      ],
+      "description": "旋转木马上的光与梦，是童年最绚烂的注脚。",
+      "descriptionEn": "Lights and dreams on the carousel — the most brilliant footnote of childhood."
+    },
+    {
+      "id": "photo-han-dong",
+      "title": "寒冬",
+      "en": "Cold Winter",
+      "category": "photo",
+      "year": "摄影",
+      "type": "摄影 / Photography",
+      "images": [
+        "assets/works/photo/han-dong/han-dong-01.jpg"
+      ],
+      "description": "凛冽的空气里，也藏着一份清冷的诗意。",
+      "descriptionEn": "In the biting air hides a quiet, wintry poetry."
+    },
+    {
+      "id": "photo-xue-ji",
+      "title": "雪季",
+      "en": "Snow Season",
+      "category": "photo",
+      "year": "摄影",
+      "type": "摄影 / Photography",
+      "images": [
+        "assets/works/photo/xue-ji/xue-ji-01.jpg"
+      ],
+      "description": "雪落无声，世界被温柔地包裹起来。",
+      "descriptionEn": "Snow falls silently, wrapping the world in tenderness."
+    },
+    {
+      "id": "photo-xin-sheng",
+      "title": "新生",
+      "en": "New Life",
+      "category": "photo",
+      "year": "摄影",
+      "type": "摄影 / Photography",
+      "images": [
+        "assets/works/photo/xin-sheng/xin-sheng-01.jpg"
+      ],
+      "description": "破土的一瞬，所有等待都有了答案。",
+      "descriptionEn": "The moment of breaking through — every wait finds its answer."
+    },
+    {
+      "id": "photo-xing",
+      "title": "星系列",
+      "en": "Star Series",
+      "category": "photo",
+      "year": "摄影",
+      "type": "摄影 / Photography",
+      "images": [
+        "assets/works/photo/xing/xing-01.jpg",
+        "assets/works/photo/xing/xing-02.jpg"
+      ],
+      "description": "抬头望向夜空，那些闪烁从未停止。",
+      "descriptionEn": "Look up at the night sky — the stars never stop shining."
+    },
+    {
+      "id": "photo-hai-zao",
+      "title": "海藻",
+      "en": "Seaweed",
+      "category": "photo",
+      "year": "摄影",
+      "type": "摄影 / Photography",
+      "images": [
+        "assets/works/photo/hai-zao/hai-zao-01.jpg"
+      ],
+      "description": "随波摇曳的姿态，是大海写给陆地的诗。",
+      "descriptionEn": "Swaying with the waves — the sea’s letter to the land."
+    },
+    {
+      "id": "personal-pin-tie",
+      "title": "拼贴",
+      "en": "Collage",
+      "category": "personal",
+      "year": "创作",
+      "type": "个人创作 / Personal",
+      "images": [
+        "assets/works/personal/pin-tie/pin-tie-01.jpg",
+        "assets/works/personal/pin-tie/pin-tie-02.jpg"
+      ],
+      "description": "以碎片重组想象，让不同的纸张与色彩在同一张画布上相遇。",
+      "descriptionEn": "Recombining fragments of imagination — different papers and colors meet on a single canvas."
+    },
+    {
+      "id": "personal-nana",
+      "title": "NANA",
+      "en": "NANA",
+      "category": "personal",
+      "year": "创作",
+      "type": "个人创作 / Personal",
+      "images": [
+        "assets/works/personal/nana/nana-01.jpg",
+        "assets/works/personal/nana/nana-02.jpg"
+      ],
+      "description": "关于女孩、城市与摇滚的私语。",
+      "descriptionEn": "Whispers of girls, cities, and rock & roll."
+    },
+    {
+      "id": "personal-liu-yue",
+      "title": "六月里最后的苹果",
+      "en": "The Last Apple of June",
+      "category": "personal",
+      "year": "创作",
+      "type": "个人创作 / Personal",
+      "images": [
+        "assets/works/personal/liu-yue/liu-yue-01.jpg",
+        "assets/works/personal/liu-yue/liu-yue-02.jpg",
+        "assets/works/personal/liu-yue/liu-yue-03.jpg",
+        "assets/works/personal/liu-yue/liu-yue-04.jpg"
+      ],
+      "description": "初夏即将结束时摘到的那只苹果，甜中带一丝不舍。",
+      "descriptionEn": "The apple picked as early summer ends — sweet with a touch of reluctance."
+    },
+    {
+      "id": "personal-wu-ti",
+      "title": "无题",
+      "en": "Untitled",
+      "category": "personal",
+      "year": "创作",
+      "type": "个人创作 / Personal",
+      "images": [
+        "assets/works/personal/wu-ti/wu-ti-01.jpg"
+      ],
+      "description": "有些画面，不需要名字。",
+      "descriptionEn": "Some images need no name."
+    },
+    {
+      "id": "personal-hei-ye-fei-xing",
+      "title": "黑夜飞行",
+      "en": "Night Flight",
+      "category": "personal",
+      "year": "创作",
+      "type": "个人创作 / Personal",
+      "images": [
+        "assets/works/personal/hei-ye-fei-xing/hei-ye-fei-xing-01.jpg"
+      ],
+      "description": "夜色里，一切都在悄悄起飞。",
+      "descriptionEn": "In the dark of night, everything quietly takes flight."
+    },
+    {
+      "id": "design-shu-zi",
+      "title": "数字插画",
+      "en": "Digital Illustration",
+      "category": "design",
+      "year": "设计",
+      "type": "设计 / Design",
+      "images": [
+        "assets/works/design/shu-zi-cha-hua/shu-zi-cha-hua-19.jpg",
+        "assets/works/design/shu-zi-cha-hua/shu-zi-cha-hua-01.jpg",
+        "assets/works/design/shu-zi-cha-hua/shu-zi-cha-hua-02.jpg",
+        "assets/works/design/shu-zi-cha-hua/shu-zi-cha-hua-03.jpg",
+        "assets/works/design/shu-zi-cha-hua/shu-zi-cha-hua-04.jpg",
+        "assets/works/design/shu-zi-cha-hua/shu-zi-cha-hua-05.jpg",
+        "assets/works/design/shu-zi-cha-hua/shu-zi-cha-hua-06.jpg",
+        "assets/works/design/shu-zi-cha-hua/shu-zi-cha-hua-07.jpg",
+        "assets/works/design/shu-zi-cha-hua/shu-zi-cha-hua-08.jpg",
+        "assets/works/design/shu-zi-cha-hua/shu-zi-cha-hua-09.jpg",
+        "assets/works/design/shu-zi-cha-hua/shu-zi-cha-hua-10.jpg",
+        "assets/works/design/shu-zi-cha-hua/shu-zi-cha-hua-11.jpg",
+        "assets/works/design/shu-zi-cha-hua/shu-zi-cha-hua-12.jpg",
+        "assets/works/design/shu-zi-cha-hua/shu-zi-cha-hua-13.jpg",
+        "assets/works/design/shu-zi-cha-hua/shu-zi-cha-hua-14.jpg",
+        "assets/works/design/shu-zi-cha-hua/shu-zi-cha-hua-15.jpg",
+        "assets/works/design/shu-zi-cha-hua/shu-zi-cha-hua-16.jpg",
+        "assets/works/design/shu-zi-cha-hua/shu-zi-cha-hua-17.jpg",
+        "assets/works/design/shu-zi-cha-hua/shu-zi-cha-hua-18.jpg"
+      ],
+      "description": "借助生成式技术探索画面的可能性，再通过后期调整与审美判断让作品落到想要的方向。",
+      "descriptionEn": "Using generative tools to explore visual possibilities, then refining through editing and aesthetic judgment to guide each piece toward its intended direction."
+    },
+    {
+      "id": "design-yin-zhang",
+      "title": "印章设计",
+      "en": "Seal Design",
+      "category": "design",
+      "year": "设计",
+      "type": "设计 / Design",
+      "images": [
+        "assets/works/design/yin-zhang/yin-zhang-10.png",
+        "assets/works/design/yin-zhang/yin-zhang-01.png",
+        "assets/works/design/yin-zhang/yin-zhang-02.jpg",
+        "assets/works/design/yin-zhang/yin-zhang-03.png",
+        "assets/works/design/yin-zhang/yin-zhang-04.png",
+        "assets/works/design/yin-zhang/yin-zhang-05.png",
+        "assets/works/design/yin-zhang/yin-zhang-06.png",
+        "assets/works/design/yin-zhang/yin-zhang-07.png",
+        "assets/works/design/yin-zhang/yin-zhang-08.png",
+        "assets/works/design/yin-zhang/yin-zhang-09.png"
+      ],
+      "description": "在方寸之间经营构图，让传统印章在当下的纸面上继续呼吸。",
+      "descriptionEn": "Composing within a tiny square — giving traditional seals new breath on today’s paper."
+    },
+    {
+      "id": "design-logo",
+      "title": "LOGO设计",
+      "en": "Logo Design",
+      "category": "design",
+      "year": "设计",
+      "type": "设计 / Design",
+      "images": [
+        "assets/works/design/logo/logo-01.jpg",
+        "assets/works/design/logo/logo-02.jpg",
+        "assets/works/design/logo/logo-03.jpg",
+        "assets/works/design/logo/logo-04.jpg"
+      ],
+      "description": "从字形到图形，让一个符号承载完整的气质。",
+      "descriptionEn": "From letterforms to marks — one symbol carrying a full personality."
     }
   ],
   "honors": [
