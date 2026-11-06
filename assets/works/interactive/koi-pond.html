@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>池塘里的锦鲤与涟漪 · 写意</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #f5efe0;
+            background-image: radial-gradient(ellipse at 30% 20%, rgba(180, 160, 130, 0.25) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 80%, rgba(160, 140, 110, 0.2) 0%, transparent 55%),
+                repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.015) 0px, rgba(0, 0, 0, 0.015) 1px, transparent 1px, transparent 4px),
+                repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.01) 0px, rgba(0, 0, 0, 0.01) 1px, transparent 1px, transparent 4px);
+            font-family: 'STKaiti', 'KaiTi', '楷体', 'Georgia', 'Times New Roman', serif;
+            overflow: hidden;
+            cursor: pointer;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        #container {
+            position: relative;
+            border-radius: 2px;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(80, 60, 40, 0.25), 0 2px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(120, 90, 60, 0.3);
+            background: rgba(252, 248, 240, 0.6);
+            backdrop-filter: blur(2px);
+            transition: box-shadow 0.6s ease;
+        }
+        #container:hover {
+            box-shadow: 0 12px 40px rgba(80, 60, 40, 0.35), 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        canvas {
+            display: block;
+        }
+        #signature {
+            position: absolute;
+            bottom: 16px;
+            right: 28px;
+            color: rgba(120, 70, 50, 0.5);
+            font-size: 14px;
+            letter-spacing: 0.12em;
+            pointer-events: none;
+            text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
+            font-family: 'STKaiti', 'KaiTi', '楷体', serif;
+            writing-mode: vertical-rl;
+            transition: opacity 0.8s;
+        }
+        #hint {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(100, 70, 50, 0.55);
+            font-size: 14px;
+            letter-spacing: 0.1em;
+            pointer-events: none;
+            text-shadow: 0 1px 3px rgba(255, 255, 255, 0.7);
+            transition: opacity 1s ease;
+            font-family: 'STKaiti', 'KaiTi', '楷体', serif;
+        }
+        @media (max-width: 600px) {
+            #signature {
+                bottom: 8px;
+                right: 12px;
+                font-size: 12px;
+            }
+            #hint {
+                font-size: 12px;
+                bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="signature">· 悠然 ·</div>
+        <div id="hint">🖱 轻点水面 · 撒食观鱼</div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js">
+    </script>
+    <script>
+        // ==================== 写意池塘 · 锦鲤争食 ====================
+        // 中国水墨画风格 | p5.js 实现
+        // 锦鲤：写意笔触 + 扇形尾巴（正弦摆动）
+        // 涟漪：淡墨晕染圆环
+        // 鱼食：空中撒落 → 水面漂浮 → 锦鲤争食 → 循环往复
+
+        const sketch = (p) => {
+            // ---------- 池塘参数 ----------
+            const POND_CX = 375;
+            const POND_CY = 370;
+            const POND_RADIUS = 310;
+            const POND_INNER_R = 285;
+
+            let koiFish = [];
+            let ripples = [];
+            let duckweeds = [];
+            let stones = [];
+            let fishFoods = [];
+            let bgGraphics;
+            let paperTexture;
+            let globalTime = 0;
+            let nextAutoFeedTime = 0;
+
+            // ---------- 墨色涟漪 ----------
+            class Ripple {
+                constructor(x, y, maxRadius, duration, inkOpacity, warmTint) {
+                    this.x = x;
+                    this.y = y;
+                    this.radius = 2;
+                    this.maxRadius = maxRadius || 130;
+                    this.duration = duration || 70;
+                    this.age = 0;
+                    this.inkOpacity = inkOpacity || 0.5;
+                    this.warmTint = warmTint || false;
+                    this.alive = true;
+                }
+                update() {
+                    this.age++;
+                    const progress = this.age / this.duration;
+                    const eased = 1 - Math.pow(1 - progress, 2.8);
+                    this.radius = 2 + (this.maxRadius - 2) * eased;
+                    if (progress >= 1) this.alive = false;
+                }
+                draw() {
+                    const progress = this.age / this.duration;
+                    const alpha = this.inkOpacity * (1 - progress) * (1 - progress * 0.6);
+                    if (alpha <= 0.01) return;
+                    const weight = p.map(progress, 0, 1, 2.2, 0.3);
+                    p.noFill();
+                    if (this.warmTint) {
+                        p.stroke(55, 35, 25, alpha * 255);
+                    } else {
+                        p.stroke(30, 25, 20, alpha * 255);
+                    }
+                    p.strokeWeight(weight);
+                    p.strokeCap(p.ROUND);
+                    p.strokeJoin(p.ROUND);
+                    p.ellipse(this.x, this.y, this.radius * 2, this.radius * 2);
+                    if (this.radius > 12 && alpha > 0.15) {
+                        if (this.warmTint) {
+                            p.stroke(65, 45, 30, alpha * 140);
+                        } else {
+                            p.stroke(50, 40, 30, alpha * 150);
+                        }
+                        p.strokeWeight(weight * 0.6);
+                        p.ellipse(this.x, this.y, this.radius * 1.55, this.radius * 1.55);
+                    }
+                    if (p.random() < 0.06 && this.radius > 25) {
+                        const breakAngle = p.random(p.TWO_PI);
+                        const breakLen = p.random(0.12, 0.3);
+                        p.noFill();
+                        p.stroke(252, 248, 240, alpha * 200);
+                        p.strokeWeight(weight * 1.8);
+                        p.arc(this.x, this.y, this.radius * 2, this.radius * 2,
+                            breakAngle, breakAngle + breakLen * p.TWO_PI);
+                    }
+                }
+                isAlive() {
+                    return this.alive;
+                }
+            }
+
+            // ---------- 鱼食类 ----------
+            class FishFood {
+                constructor(targetX, targetY, startX, startY, fallDelay) {
+                    this.targetX = targetX;
+                    this.targetY = targetY;
+                    this.startX = startX;
+                    this.startY = startY;
+                    this.currentX = startX;
+                    this.currentY = startY;
+                    this.fallDelay = fallDelay || 0;
+                    this.fallProgress = 0;
+                    this.fallSpeed = p.random(0.018, 0.04);
+                    this.state = 'falling'; // 'falling' | 'floating' | 'sinking' | 'eaten'
+                    this.age = 0;
+                    this.maxFloatAge = p.random(700, 1100);
+                    this.seedX = p.random(300, 1800);
+                    this.seedY = p.random(300, 1800);
+                    this.initFloatX = targetX;
+                    this.initFloatY = targetY;
+                    this.floatX = targetX;
+                    this.floatY = targetY;
+                    this.size = p.random(2.8, 5.5);
+                    this.foodColor = [
+                        p.random(185, 210),
+                        p.random(155, 180),
+                        p.random(105, 135),
+                    ];
+                    this.alpha = 230;
+                    this.trailPoints = [];
+                }
+                update() {
+                    if (this.state === 'falling') {
+                        if (this.fallDelay > 0) {
+                            this.fallDelay--;
+                            this.currentX = this.startX;
+                            this.currentY = this.startY;
+                            return;
+                        }
+                        this.fallProgress += this.fallSpeed;
+                        if (this.fallProgress >= 1) {
+                            this.fallProgress = 1;
+                            this.currentX = this.targetX;
+                            this.currentY = this.targetY;
+                            this.floatX = this.targetX;
+                            this.floatY = this.targetY;
+                            this.initFloatX = this.targetX;
+                            this.initFloatY = this.targetY;
+                            this.state = 'floating';
+                            this.age = 0;
+                            const splashRipple = new Ripple(
+                                this.targetX, this.targetY,
+                                p.random(18, 38),
+                                p.random(35, 55),
+                                p.random(0.25, 0.5),
+                                true
+                            );
+                            ripples.push(splashRipple);
+                            return;
+                        }
+                        const eased = 1 - Math.pow(1 - this.fallProgress, 1.8);
+                        this.currentX = p.lerp(this.startX, this.targetX, eased);
+                        this.currentY = p.lerp(this.startY, this.targetY, eased);
+                        if (p.frameCount % 3 === 0 && this.trailPoints.length < 5) {
+                            this.trailPoints.push({ x: this.currentX, y: this.currentY, life: 18 });
+                        }
+                        for (let i = this.trailPoints.length - 1; i >= 0; i--) {
+                            this.trailPoints[i].life--;
+                            if (this.trailPoints[i].life <= 0) this.trailPoints.splice(i, 1);
+                        }
+                    } else if (this.state === 'floating') {
+                        this.age++;
+                        const drift = POND_RADIUS * 0.04;
+                        const nx = p.noise(this.seedX + globalTime * 0.0005, this.seedY * 0.5);
+                        const ny = p.noise(this.seedY + globalTime * 0.0005, this.seedX * 0.5);
+                        const ox = p.map(nx, 0, 1, -drift, drift);
+                        const oy = p.map(ny, 0, 1, -drift, drift);
+                        this.floatX = this.initFloatX + ox;
+                        this.floatY = this.initFloatY + oy;
+                        const dx = this.floatX - POND_CX;
+                        const dy = this.floatY - POND_CY;
+                        const dist = p.sqrt(dx * dx + dy * dy);
+                        const maxD = POND_RADIUS - 8;
+                        if (dist > maxD) {
+                            const ca = p.atan2(dy, dx);
+                            this.floatX = POND_CX + p.cos(ca) * maxD;
+                            this.floatY = POND_CY + p.sin(ca) * maxD;
+                            this.initFloatX = this.floatX - ox * 0.5;
+                            this.initFloatY = this.floatY - oy * 0.5;
+                        }
+                        this.currentX = this.floatX;
+                        this.currentY = this.floatY;
+                        if (this.age > this.maxFloatAge) {
+                            this.state = 'sinking';
+                            this.alpha = 200;
+                            const sinkRipple = new Ripple(
+                                this.floatX, this.floatY,
+                                p.random(14, 30),
+                                p.random(30, 48),
+                                p.random(0.18, 0.35),
+                                true
+                            );
+                            ripples.push(sinkRipple);
+                        }
+                    } else if (this.state === 'sinking') {
+                        this.alpha -= 8;
+                        this.size *= 0.94;
+                        if (this.alpha <= 5) {
+                            this.state = 'eaten';
+                        }
+                    }
+                }
+                draw() {
+                    if (this.state === 'eaten') return;
+                    if (this.state === 'falling') {
+                        for (const tp of this.trailPoints) {
+                            const trailAlpha = p.map(tp.life, 0, 18, 0, 70);
+                            p.noStroke();
+                            p.fill(180, 155, 115, trailAlpha);
+                            p.ellipse(tp.x, tp.y, this.size * 0.5, this.size * 0.5);
+                        }
+                        p.noStroke();
+                        p.fill(this.foodColor[0], this.foodColor[1], this.foodColor[2], 220);
+                        const fallStretch = 1 + (1 - this.fallProgress) * 0.7;
+                        p.ellipse(this.currentX, this.currentY, this.size * fallStretch, this.size / fallStretch);
+                        p.fill(255, 250, 240, 60);
+                        p.ellipse(this.currentX - 0.5, this.currentY - this.size * 0.2,
+                            this.size * 0.5, this.size * 0.3);
+                    } else if (this.state === 'floating') {
+                        p.noStroke();
+                        p.fill(this.foodColor[0], this.foodColor[1], this.foodColor[2], this.alpha);
+                        p.ellipse(this.currentX, this.currentY, this.size, this.size);
+                        p.fill(255, 250, 240, 40);
+                        p.ellipse(this.currentX - this.size * 0.15, this.currentY - this.size * 0.2,
+                            this.size * 0.45, this.size * 0.3);
+                        const bob = p.sin(globalTime * 0.15 + this.seedX) * 0.4;
+                        p.fill(this.foodColor[0], this.foodColor[1], this.foodColor[2],
+                            p.constrain(this.alpha - 40, 0, 255));
+                        p.ellipse(this.currentX, this.currentY + bob, this.size * 1.3, this.size * 0.7);
+                    } else if (this.state === 'sinking') {
+                        p.noStroke();
+                        p.fill(this.foodColor[0], this.foodColor[1], this.foodColor[2],
+                            p.constrain(this.alpha, 0, 255));
+                        p.ellipse(this.currentX, this.currentY, this.size, this.size);
+                    }
+                }
+                isAlive() {
+                    return this.state !== 'eaten';
+                }
+                isFloating() {
+                    return this.state === 'floating';
+                }
+                getPosition() {
+                    return { x: this.currentX, y: this.currentY };
+                }
+            }
+
+            // ---------- 写意锦鲤 ----------
+            class Koi {
+                constructor(id) {
+                    this.id = id;
+                    const angle = p.random(p.TWO_PI);
+                    const dist = p.random(POND_RADIUS * 0.5);
+                    this.x = POND_CX + p.cos(angle) * dist;
+                    this.y = POND_CY + p.sin(angle) * dist;
+                    this.bodyAngle = p.random(p.TWO_PI);
+                    this.speed = p.random(0.55, 1.5);
+                    this.normalSpeed = this.speed;
+                    this.targetAngle = this.bodyAngle;
+                    this.angleSmoothing = p.random(0.04, 0.08);
+                    this.noiseSeedX = p.random(1000);
+                    this.noiseSeedY = p.random(1000);
+                    this.noiseStep = p.random(0.003, 0.007);
+                    this.bodyLength = p.random(70, 98);
+                    this.bodyWidth = this.bodyLength * p.random(0.25, 0.35);
+                    this.tailLength = this.bodyLength * p.random(0.4, 0.55);
+                    this.tailWidth = this.bodyWidth * p.random(1.5, 2.2);
+                    this.tailFrequency = p.random(0.16, 0.3);
+                    this.tailAmplitude = p.random(0.4, 0.65);
+                    this.tailPhase = p.random(p.TWO_PI);
+                    this.tailSwingVal = 0;
+                    this.prevTailSwingVal = 0;
+                    this.rippleCooldown = 0;
+                    this.rippleCooldownMax = 16;
+                    this.seekingFood = false;
+                    this.foodTargetX = 0;
+                    this.foodTargetY = 0;
+                    this.feedCooldown = 0;
+                    this.initInkColors();
+                    this.patches = [];
+                    this.initPatches();
+                }
+                initInkColors() {
+                    const schemes = [
+                        { bodyInk: [180, 60, 45], bodyLight: [210, 90, 65], patchInk: [40, 25, 20],
+                            tailInk: [190, 75, 55], finInk: [200, 100, 70], hasRed: true },
+                        { bodyInk: [50, 40, 35], bodyLight: [70, 55, 45], patchInk: [200, 70, 50],
+                            tailInk: [60, 45, 40], finInk: [80, 60, 50], hasRed: true, crownOnly: true },
+                        { bodyInk: [40, 45, 50], bodyLight: [80, 85, 90], patchInk: [180, 100, 80],
+                            tailInk: [45, 50, 55], finInk: [70, 75, 80], hasRed: true, faint: true },
+                    ];
+                    const scheme = schemes[this.id % schemes.length];
+                    this.inkBody = scheme.bodyInk;
+                    this.inkBodyLight = scheme.bodyLight;
+                    this.inkPatch = scheme.patchInk;
+                    this.inkTail = scheme.tailInk;
+                    this.inkFin = scheme.finInk;
+                    this.hasRed = scheme.hasRed;
+                    this.crownOnly = scheme.crownOnly || false;
+                    this.faintStyle = scheme.faint || false;
+                }
+                initPatches() {
+                    if (!this.hasRed) return;
+                    const count = this.crownOnly ? 1 : p.floor(p.random(2, 5));
+                    for (let i = 0; i < count; i++) {
+                        let px, py, pw, ph;
+                        if (this.crownOnly && i === 0) {
+                            px = this.bodyLength * p.random(0.28, 0.44);
+                            py = p.random(-this.bodyWidth * 0.15, this.bodyWidth * 0.15);
+                            pw = this.bodyLength * p.random(0.22, 0.35);
+                            ph = this.bodyWidth * p.random(0.55, 0.85);
+                        } else {
+                            px = p.random(-this.bodyLength * 0.2, this.bodyLength * 0.25);
+                            py = p.random(-this.bodyWidth * 0.3, this.bodyWidth * 0.3);
+                            pw = this.bodyLength * p.random(0.2, 0.5);
+                            ph = this.bodyWidth * p.random(0.4, 0.8);
+                        }
+                        this.patches.push({ x: px, y: py, w: pw, h: ph, alpha: p.random(0.5, 0.85) });
+                    }
+                }
+                setFoodTarget(fx, fy) {
+                    this.seekingFood = true;
+                    this.foodTargetX = fx;
+                    this.foodTargetY = fy;
+                    this.speed = this.normalSpeed * p.random(1.35, 1.7);
+                }
+                clearFoodTarget() {
+                    this.seekingFood = false;
+                    this.speed = this.normalSpeed;
+                    this.feedCooldown = p.floor(p.random(25, 55));
+                }
+                update() {
+                    if (this.feedCooldown > 0) {
+                        this.feedCooldown--;
+                        if (this.feedCooldown <= 0 && this.seekingFood === false) {
+                            this.speed = this.normalSpeed;
+                        }
+                    }
+                    if (this.seekingFood && this.feedCooldown <= 0) {
+                        const dx = this.foodTargetX - this.x;
+                        const dy = this.foodTargetY - this.y;
+                        const distToFood = p.sqrt(dx * dx + dy * dy);
+                        if (distToFood < this.bodyLength * 0.55) {
+                            this.clearFoodTarget();
+                            return;
+                        }
+                        this.targetAngle = p.atan2(dy, dx);
+                    } else if (!this.seekingFood) {
+                        const nx = p.noise(this.noiseSeedX + globalTime * this.noiseStep);
+                        const ny = p.noise(this.noiseSeedY + globalTime * this.noiseStep);
+                        const noiseAngle = p.map(nx, 0, 1, -p.PI * 0.6, p.PI * 0.6);
+                        const noiseStrength = p.map(ny, 0, 1, 0.25, 1.0);
+                        this.targetAngle += noiseAngle * noiseStrength * 0.045;
+                    }
+                    let diff = this.targetAngle - this.bodyAngle;
+                    while (diff > p.PI) diff -= p.TWO_PI;
+                    while (diff < -p.PI) diff += p.TWO_PI;
+                    this.bodyAngle += diff * this.angleSmoothing;
+                    this.bodyAngle = this.bodyAngle % p.TWO_PI;
+                    const vx = p.cos(this.bodyAngle) * this.speed;
+                    const vy = p.sin(this.bodyAngle) * this.speed;
+                    this.x += vx;
+                    this.y += vy;
+                    const dxc = this.x - POND_CX;
+                    const dyc = this.y - POND_CY;
+                    const distC = p.sqrt(dxc * dxc + dyc * dyc);
+                    const limit = POND_RADIUS - this.bodyLength * 0.65;
+                    if (distC > limit) {
+                        const pushAngle = p.atan2(-dyc, -dxc);
+                        this.targetAngle = pushAngle + p.random(-0.4, 0.4);
+                        this.bodyAngle += (this.targetAngle - this.bodyAngle) * 0.2;
+                        const inward = (distC - limit) * 0.25;
+                        this.x += p.cos(pushAngle) * inward;
+                        this.y += p.sin(pushAngle) * inward;
+                        if (this.seekingFood) {
+                            this.seekingFood = false;
+                            this.speed = this.normalSpeed;
+                        }
+                    }
+                    const finalDist = p.sqrt((this.x - POND_CX) ** 2 + (this.y - POND_CY) ** 2);
+                    if (finalDist > POND_RADIUS - this.bodyWidth) {
+                        const clampA = p.atan2(this.y - POND_CY, this.x - POND_CX);
+                        this.x = POND_CX + p.cos(clampA) * (POND_RADIUS - this.bodyWidth);
+                        this.y = POND_CY + p.sin(clampA) * (POND_RADIUS - this.bodyWidth);
+                    }
+                    this.prevTailSwingVal = this.tailSwingVal;
+                    const tailFreq = this.seekingFood ? this.tailFrequency * 1.4 : this.tailFrequency;
+                    const tailAmp = this.seekingFood ? this.tailAmplitude * 1.2 : this.tailAmplitude;
+                    this.tailSwingVal = p.sin(globalTime * tailFreq + this.tailPhase) * tailAmp;
+                    if (this.rippleCooldown <= 0 &&
+                        p.abs(this.tailSwingVal) > tailAmp * 0.88 &&
+                        p.abs(this.prevTailSwingVal) < p.abs(this.tailSwingVal)) {
+                        this.generateTailRipple();
+                        this.rippleCooldown = this.rippleCooldownMax;
+                    }
+                    if (this.rippleCooldown > 0) this.rippleCooldown--;
+                }
+                generateTailRipple() {
+                    const tx = this.x - p.cos(this.bodyAngle) * (this.bodyLength * 0.48);
+                    const ty = this.y - p.sin(this.bodyAngle) * (this.bodyLength * 0.48);
+                    const ripple = new Ripple(
+                        tx + p.random(-5, 5),
+                        ty + p.random(-5, 5),
+                        p.random(50, 85),
+                        p.random(50, 75),
+                        p.random(0.2, 0.45),
+                        false
+                    );
+                    ripples.push(ripple);
+                }
+                getHeadPosition() {
+                    return {
+                        x: this.x + p.cos(this.bodyAngle) * this.bodyLength * 0.38,
+                        y: this.y + p.sin(this.bodyAngle) * this.bodyLength * 0.38,
+                    };
+                }
+                draw() {
+                    p.push();
+                    p.translate(this.x, this.y);
+                    p.rotate(this.bodyAngle);
+                    p.noStroke();
+                    p.fill(20, 18, 15, 18);
+                    p.ellipse(2, 4, this.bodyLength * 1.05, this.bodyWidth * 1.1);
+                    this.drawInkBody();
+                    this.drawHead();
+                    for (const patch of this.patches) {
+                        this.drawPatch(patch);
+                    }
+                    this.drawEyes();
+                    this.drawFins();
+                    this.drawTail();
+                    p.pop();
+                }
+                drawInkBody() {
+                    const layers = 4;
+                    for (let i = layers - 1; i >= 0; i--) {
+                        const t = i / (layers - 1);
+                        const lw = this.bodyLength * (1 - t * 0.18);
+                        const lh = this.bodyWidth * (1 - t * 0.22);
+                        const r = p.lerp(this.inkBody[0], this.inkBodyLight[0], t * 0.7);
+                        const g = p.lerp(this.inkBody[1], this.inkBodyLight[1], t * 0.7);
+                        const b = p.lerp(this.inkBody[2], this.inkBodyLight[2], t * 0.7);
+                        const alpha = this.faintStyle ? 140 + t * 40 : 180 + t * 35;
+                        p.noStroke();
+                        p.fill(r, g, b, alpha);
+                        p.ellipse(p.random(-1.5, 1.5), p.random(-1, 1), lw, lh);
+                    }
+                    p.noFill();
+                    p.stroke(this.inkBody[0] - 30, this.inkBody[1] - 25, this.inkBody[2] - 20, 90);
+                    p.strokeWeight(0.9);
+                    p.strokeCap(p.ROUND);
+                    p.ellipse(0, 0, this.bodyLength * 0.92, this.bodyWidth * 0.88);
+                }
+                drawHead() {
+                    const hx = this.bodyLength * 0.36;
+                    const hw = this.bodyLength * 0.4;
+                    const hh = this.bodyWidth * 1.2;
+                    p.noStroke();
+                    p.fill(this.inkBodyLight[0], this.inkBodyLight[1], this.inkBodyLight[2], 210);
+                    p.ellipse(hx, 0, hw, hh);
+                }
+                drawPatch(patch) {
+                    p.noStroke();
+                    p.fill(this.inkPatch[0], this.inkPatch[1], this.inkPatch[2],
+                        p.constrain(patch.alpha * 255, 0, 255));
+                    p.ellipse(patch.x, patch.y, patch.w, patch.h);
+                    p.fill(this.inkPatch[0], this.inkPatch[1], this.inkPatch[2],
+                        p.constrain(patch.alpha * 100, 0, 255));
+                    p.ellipse(patch.x, patch.y, patch.w * 1.15, patch.h * 1.15);
+                }
+                drawEyes() {
+                    const ex = this.bodyLength * 0.43;
+                    const ey = this.bodyWidth * 0.38;
+                    const es = this.bodyWidth * 0.2;
+                    for (const side of [-1, 1]) {
+                        p.noStroke();
+                        p.fill(250, 248, 240, 210);
+                        p.ellipse(ex, ey * side, es, es * 1.1);
+                        p.fill(15, 12, 10);
+                        p.ellipse(ex + es * 0.12, ey * side, es * 0.55, es * 0.6);
+                        p.fill(250, 248, 240, 180);
+                        p.ellipse(ex + es * 0.2, ey * side - es * 0.18, es * 0.22, es * 0.2);
+                    }
+                }
+                drawFins() {
+                    const fx = this.bodyLength * 0.05;
+                    const fy = this.bodyWidth * 0.58;
+                    const fl = this.bodyLength * 0.26;
+                    const fw = this.bodyWidth * 0.5;
+                    const finAngle = p.sin(globalTime * 0.22 + this.tailPhase + 0.7) * 0.35;
+                    for (const side of [-1, 1]) {
+                        p.push();
+                        p.translate(fx, fy * side);
+                        p.rotate(side * finAngle);
+                        p.noStroke();
+                        p.fill(this.inkFin[0], this.inkFin[1], this.inkFin[2], 170);
+                        p.ellipse(fl * 0.3, side * fl * 0.1, fl, fw);
+                        p.stroke(this.inkFin[0] - 25, this.inkFin[1] - 20, this.inkFin[2] - 15, 70);
+                        p.strokeWeight(0.6);
+                        p.line(0, 0, fl * 0.7, side * fw * 0.2);
+                        p.noStroke();
+                        p.pop();
+                    }
+                }
+                drawTail() {
+                    const tailX = -this.bodyLength * 0.44;
+                    p.push();
+                    p.translate(tailX, 0);
+                    p.noStroke();
+                    p.fill(this.inkBody[0] - 15, this.inkBody[1] - 12, this.inkBody[2] - 10, 190);
+                    p.ellipse(0, 0, this.tailLength * 0.35, this.tailWidth * 0.3);
+                    const halfOpen = p.PI / 6;
+                    const swing = this.tailSwingVal;
+                    const center = p.PI;
+                    const start = center - halfOpen + swing;
+                    const end = center + halfOpen + swing;
+                    const arcW = this.tailLength * 2;
+                    const arcH = this.tailWidth * 1.7;
+                    p.noStroke();
+                    p.fill(this.inkTail[0], this.inkTail[1], this.inkTail[2], 190);
+                    p.arc(0, 0, arcW, arcH, start, end, p.PIE);
+                    p.fill(this.inkTail[0] - 30, this.inkTail[1] - 25, this.inkTail[2] - 20, 170);
+                    p.arc(0, 0, arcW * 0.75, arcH * 0.8, start, end, p.PIE);
+                    p.fill(252, 248, 240, 140);
+                    p.noStroke();
+                    const notchAngle = center + swing;
+                    p.push();
+                    p.rotate(notchAngle);
+                    p.ellipse(arcW * 0.28, 0, arcW * 0.55, arcH * 0.22);
+                    p.pop();
+                    p.noFill();
+                    p.stroke(this.inkTail[0] - 35, this.inkTail[1] - 30, this.inkTail[2] - 25, 90);
+                    p.strokeWeight(0.6);
+                    for (let i = 0; i < 6; i++) {
+                        const t = i / 5;
+                        const a = start + (end - start) * t;
+                        p.line(p.cos(a) * 4, p.sin(a) * 3, p.cos(a) * arcW * 0.43, p.sin(a) * arcH * 0.37);
+                    }
+                    p.pop();
+                }
+            }
+
+            // ---------- 浮萍 ----------
+            class Duckweed {
+                constructor(index) {
+                    const angle = p.random(p.TWO_PI);
+                    const dist = p.random(POND_RADIUS * 0.75);
+                    this.initX = POND_CX + p.cos(angle) * dist;
+                    this.initY = POND_CY + p.sin(angle) * dist;
+                    this.x = this.initX;
+                    this.y = this.initY;
+                    this.seedX = p.random(400, 1800);
+                    this.seedY = p.random(400, 1800);
+                    this.seedRot = p.random(300, 1400);
+                    this.width = p.random(6, 15);
+                    this.height = this.width * p.random(0.5, 0.8);
+                    this.rotation = p.random(p.TWO_PI);
+                    const gray = p.random(40, 110);
+                    this.inkColor = [gray - 15, gray - 8, gray];
+                    this.alpha = p.random(120, 200);
+                }
+                update() {
+                    const drift = POND_RADIUS * 0.1;
+                    const nx = p.noise(this.seedX + globalTime * 0.0007, this.seedY * 0.6);
+                    const ny = p.noise(this.seedY + globalTime * 0.0007, this.seedX * 0.6);
+                    const ox = p.map(nx, 0, 1, -drift, drift);
+                    const oy = p.map(ny, 0, 1, -drift, drift);
+                    this.x = this.initX + ox;
+                    this.y = this.initY + oy;
+                    const dx = this.x - POND_CX;
+                    const dy = this.y - POND_CY;
+                    const dist = p.sqrt(dx * dx + dy * dy);
+                    const maxD = POND_RADIUS - this.width;
+                    if (dist > maxD) {
+                        const ca = p.atan2(dy, dx);
+                        this.x = POND_CX + p.cos(ca) * maxD;
+                        this.y = POND_CY + p.sin(ca) * maxD;
+                        this.initX = this.x - ox * 0.4;
+                        this.initY = this.y - oy * 0.4;
+                    }
+                    this.rotation += p.map(p.noise(this.seedRot + globalTime * 0.0004), 0, 1, -0.012, 0.012);
+                    this.rotation = this.rotation % p.TWO_PI;
+                }
+                draw() {
+                    p.push();
+                    p.translate(this.x, this.y);
+                    p.rotate(this.rotation);
+                    p.noStroke();
+                    p.fill(this.inkColor[0], this.inkColor[1], this.inkColor[2], this.alpha);
+                    p.ellipse(0, 0, this.width, this.height);
+                    p.fill(252, 248, 240, 35);
+                    p.ellipse(-this.width * 0.1, -this.height * 0.15, this.width * 0.4, this.height * 0.3);
+                    p.pop();
+                }
+            }
+
+            // ---------- 石头 ----------
+            class Stone {
+                constructor(angle, distFromEdge) {
+                    const a = angle + p.random(-0.12, 0.12);
+                    const d = POND_RADIUS + distFromEdge;
+                    this.x = POND_CX + p.cos(a) * d;
+                    this.y = POND_CY + p.sin(a) * d;
+                    this.width = p.random(12, 34);
+                    this.height = this.width * p.random(0.5, 0.8);
+                    this.rotation = p.random(p.TWO_PI);
+                    this.ink = [p.random(50, 90), p.random(40, 75), p.random(35, 65)];
+                }
+                draw() {
+                    p.push();
+                    p.translate(this.x, this.y);
+                    p.rotate(this.rotation);
+                    p.noStroke();
+                    p.fill(this.ink[0], this.ink[1], this.ink[2], 170);
+                    p.ellipse(0, 0, this.width, this.height);
+                    p.fill(this.ink[0] + 30, this.ink[1] + 25, this.ink[2] + 20, 90);
+                    p.ellipse(-this.width * 0.15, -this.height * 0.2, this.width * 0.6, this.height * 0.45);
+                    p.pop();
+                }
+            }
+
+            // ---------- 撒鱼食函数 ----------
+            function spawnFoodBatch(originX, originY, count, spreadRadius) {
+                const pp = getPP();
+                const actualCount = p.floor(count);
+                for (let i = 0; i < actualCount; i++) {
+                    let tx, ty;
+                    let attempts = 0;
+                    do {
+                        const ta = p.random(p.TWO_PI);
+                        const td = p.random(spreadRadius * 0.2, spreadRadius);
+                        tx = originX + p.cos(ta) * td;
+                        ty = originY + p.sin(ta) * td;
+                        attempts++;
+                    } while (
+                        p.dist(tx, ty, pp.cx, pp.cy) > pp.radius - 12 &&
+                        attempts < 30
+                    );
+                    if (p.dist(tx, ty, pp.cx, pp.cy) > pp.radius - 8) {
+                        const ca = p.atan2(ty - pp.cy, tx - pp.cx);
+                        tx = pp.cx + p.cos(ca) * (pp.radius - 14);
+                        ty = pp.cy + p.sin(ca) * (pp.radius - 14);
+                    }
+                    const startY = originY - p.random(80, 180);
+                    const startX = tx + p.random(-50, 50);
+                    const delay = p.floor(p.random(0, 18));
+                    const food = new FishFood(tx, ty, startX, startY, delay);
+                    fishFoods.push(food);
+                }
+            }
+
+            function autoFeed() {
+                const pp = getPP();
+                const originX = pp.cx + p.random(-80, 80);
+                const originY = pp.cy - pp.radius + p.random(10, 40);
+                const count = p.floor(p.random(7, 14));
+                spawnFoodBatch(originX, originY, count, pp.radius * 0.75);
+            }
+
+            // ---------- p5 生命周期 ----------
+            p.setup = () => {
+                const size = p.min(750, p.windowWidth - 16, p.windowHeight - 16);
+                const canvas = p.createCanvas(size, size);
+                canvas.parent('container');
+                const containerEl = document.getElementById('container');
+                if (containerEl) {
+                    containerEl.style.width = size + 'px';
+                    containerEl.style.height = size + 'px';
+                }
+                adjustParams(size);
+                p.pixelDensity(p.min(p.displayDensity(), 2));
+                p.frameRate(60);
+                paperTexture = createPaperTexture();
+                const stoneCount = 48;
+                for (let i = 0; i < stoneCount; i++) {
+                    const a = (i / stoneCount) * p.TWO_PI + p.random(-0.06, 0.06);
+                    stones.push(new Stone(a, p.random(-28, 32)));
+                }
+                for (let i = 0; i < 18; i++) {
+                    duckweeds.push(new Duckweed(i));
+                }
+                for (let i = 0; i < 5; i++) {
+                    koiFish.push(new Koi(i));
+                }
+                renderBg();
+                for (let i = 0; i < 4; i++) {
+                    const pp2 = getPP();
+                    const rx = pp2.cx + p.random(-pp2.innerR * 0.6, pp2.innerR * 0.6);
+                    const ry = pp2.cy + p.random(-pp2.innerR * 0.6, pp2.innerR * 0.6);
+                    const rip = new Ripple(rx, ry, p.random(70, 140), p.random(60, 100), p.random(0.15, 0.4), false);
+                    rip.age = p.random(10, 45);
+                    ripples.push(rip);
+                }
+                nextAutoFeedTime = p.frameCount + p.floor(p.random(150, 280));
+            };
+
+            function adjustParams(size) {
+                window._pondCX = size / 2;
+                window._pondCY = size * 0.493;
+                window._pondRadius = size * 0.413;
+                window._pondInnerR = size * 0.38;
+            }
+            function getPP() {
+                return {
+                    cx: window._pondCX || POND_CX,
+                    cy: window._pondCY || POND_CY,
+                    radius: window._pondRadius || POND_RADIUS,
+                    innerR: window._pondInnerR || POND_INNER_R,
+                };
+            }
+            function createPaperTexture() {
+                const tex = p.createGraphics(p.width, p.height);
+                tex.pixelDensity(1);
+                tex.loadPixels();
+                for (let y = 0; y < tex.height; y++) {
+                    for (let x = 0; x < tex.width; x++) {
+                        const nv = p.noise(x * 0.04, y * 0.04) * 25;
+                        tex.set(x, y, [245 + nv, 240 + nv, 232 + nv, 255]);
+                    }
+                }
+                tex.updatePixels();
+                return tex;
+            }
+            function renderBg() {
+                const pp = getPP();
+                bgGraphics = p.createGraphics(p.width, p.height);
+                bgGraphics.pixelDensity(p.pixelDensity());
+                if (paperTexture) bgGraphics.image(paperTexture, 0, 0);
+                const layers = 10;
+                for (let i = layers - 1; i >= 0; i--) {
+                    const t = i / (layers - 1);
+                    const r = pp.radius - t * 6;
+                    const gray = p.lerp(215, 160, t);
+                    const alpha = 70 + t * 20;
+                    bgGraphics.noStroke();
+                    bgGraphics.fill(gray - 10, gray - 5, gray, alpha);
+                    bgGraphics.ellipse(pp.cx, pp.cy, r * 2, r * 2);
+                }
+                for (let i = 0; i < 10; i++) {
+                    const sx = pp.cx + p.random(-pp.innerR * 0.8, pp.innerR * 0.8);
+                    const sy = pp.cy + p.random(-pp.innerR * 0.8, pp.innerR * 0.8);
+                    bgGraphics.noStroke();
+                    bgGraphics.fill(30, 25, 20, 25);
+                    bgGraphics.ellipse(sx, sy, p.random(40, 90), p.random(25, 60));
+                }
+                for (let i = 0; i < 18; i++) {
+                    const lx = pp.cx + p.random(-pp.innerR * 0.85, pp.innerR * 0.85);
+                    const ly = pp.cy + p.random(-pp.innerR * 0.85, pp.innerR * 0.85);
+                    if (p.dist(lx, ly, pp.cx, pp.cy) < pp.innerR - 8) {
+                        bgGraphics.noStroke();
+                        bgGraphics.fill(240, 235, 225, p.random(20, 55));
+                        bgGraphics.ellipse(lx, ly, p.random(18, 50), p.random(3, 10));
+                    }
+                }
+            }
+
+            p.draw = () => {
+                const pp = getPP();
+                globalTime = p.frameCount;
+                if (bgGraphics) p.image(bgGraphics, 0, 0);
+                for (const s of stones) s.draw();
+                p.noFill();
+                p.stroke(100, 80, 60, 50);
+                p.strokeWeight(1.8);
+                p.strokeCap(p.ROUND);
+                p.ellipse(pp.cx, pp.cy, pp.radius * 2, pp.radius * 2);
+                p.stroke(80, 60, 40, 35);
+                p.strokeWeight(1);
+                p.ellipse(pp.cx, pp.cy, pp.radius * 2 - 4, pp.radius * 2 - 4);
+
+                // 更新鱼食
+                for (let i = fishFoods.length - 1; i >= 0; i--) {
+                    fishFoods[i].update();
+                    if (!fishFoods[i].isAlive()) {
+                        fishFoods.splice(i, 1);
+                    }
+                }
+
+                // 为锦鲤分配最近鱼食
+                const floatingFoods = fishFoods.filter(f => f.isFloating());
+                for (const koi of koiFish) {
+                    if (koi.feedCooldown > 0 || koi.seekingFood) {
+                        if (koi.seekingFood) {
+                            const targetFood = floatingFoods.find(f => {
+                                const pos = f.getPosition();
+                                return p.abs(pos.x - koi.foodTargetX) < 1 && p.abs(pos.y - koi.foodTargetY) < 1;
+                            });
+                            if (!targetFood) {
+                                koi.clearFoodTarget();
+                            }
+                        }
+                        if (!koi.seekingFood && koi.feedCooldown <= 0 && floatingFoods.length > 0) {
+                            let nearest = null;
+                            let minDist = Infinity;
+                            const headPos = koi.getHeadPosition();
+                            for (const food of floatingFoods) {
+                                const fpos = food.getPosition();
+                                const d = p.dist(headPos.x, headPos.y, fpos.x, fpos.y);
+                                if (d < minDist) {
+                                    minDist = d;
+                                    nearest = food;
+                                }
+                            }
+                            if (nearest && minDist < pp.radius * 0.75) {
+                                const fpos = nearest.getPosition();
+                                koi.setFoodTarget(fpos.x, fpos.y);
+                            }
+                        }
+                    } else if (floatingFoods.length > 0) {
+                        let nearest = null;
+                        let minDist = Infinity;
+                        const headPos = koi.getHeadPosition();
+                        for (const food of floatingFoods) {
+                            const fpos = food.getPosition();
+                            const d = p.dist(headPos.x, headPos.y, fpos.x, fpos.y);
+                            if (d < minDist) {
+                                minDist = d;
+                                nearest = food;
+                            }
+                        }
+                        if (nearest && minDist < pp.radius * 0.75) {
+                            const fpos = nearest.getPosition();
+                            koi.setFoodTarget(fpos.x, fpos.y);
+                        }
+                    }
+                }
+
+                // 检测锦鲤是否吃到鱼食
+                for (const koi of koiFish) {
+                    if (!koi.seekingFood) continue;
+                    const headPos = koi.getHeadPosition();
+                    for (let i = floatingFoods.length - 1; i >= 0; i--) {
+                        const food = floatingFoods[i];
+                        const fpos = food.getPosition();
+                        const d = p.dist(headPos.x, headPos.y, fpos.x, fpos.y);
+                        if (d < koi.bodyLength * 0.5) {
+                            food.state = 'sinking';
+                            food.alpha = 180;
+                            const eatRipple = new Ripple(
+                                fpos.x, fpos.y,
+                                p.random(16, 32),
+                                p.random(30, 50),
+                                p.random(0.2, 0.4),
+                                true
+                            );
+                            ripples.push(eatRipple);
+                            koi.clearFoodTarget();
+                            break;
+                        }
+                    }
+                }
+
+                // 更新锦鲤
+                for (const koi of koiFish) {
+                    koi.update();
+                }
+
+                // 更新浮萍
+                for (const dw of duckweeds) {
+                    dw.update();
+                    dw.draw();
+                }
+
+                // 绘制锦鲤
+                for (const koi of koiFish) {
+                    koi.draw();
+                }
+
+                // 绘制漂浮鱼食
+                for (const food of fishFoods) {
+                    if (food.isFloating() || food.state === 'sinking') {
+                        food.draw();
+                    }
+                }
+
+                // 绘制下落鱼食
+                for (const food of fishFoods) {
+                    if (food.state === 'falling') {
+                        food.draw();
+                    }
+                }
+
+                // 更新和绘制涟漪
+                for (let i = ripples.length - 1; i >= 0; i--) {
+                    ripples[i].update();
+                    if (!ripples[i].isAlive()) ripples.splice(i, 1);
+                    else ripples[i].draw();
+                }
+
+                // 自动撒食循环
+                if (p.frameCount >= nextAutoFeedTime) {
+                    autoFeed();
+                    nextAutoFeedTime = p.frameCount + p.floor(p.random(380, 700));
+                }
+
+                // 偶尔微风涟漪
+                if (p.random() < 0.025 && ripples.length < 14) {
+                    const arx = pp.cx + p.random(-pp.innerR * 0.8, pp.innerR * 0.8);
+                    const ary = pp.cy + p.random(-pp.innerR * 0.8, pp.innerR * 0.8);
+                    if (p.dist(arx, ary, pp.cx, pp.cy) < pp.innerR) {
+                        ripples.push(new Ripple(arx, ary, p.random(35, 80), p.random(45, 70), p.random(0.1, 0.3), false));
+                    }
+                }
+            };
+
+            // ---------- 点击撒食 ----------
+            p.mousePressed = () => {
+                const pp = getPP();
+                const mx = p.mouseX;
+                const my = p.mouseY;
+                if (p.dist(mx, my, pp.cx, pp.cy) < pp.radius - 4) {
+                    ripples.push(new Ripple(mx, my, p.random(140, 220), p.random(80, 120), p.random(0.3, 0.55), false));
+                    const extras = p.floor(p.random(2, 5));
+                    for (let i = 0; i < extras; i++) {
+                        const ex = mx + p.random(-30, 30);
+                        const ey = my + p.random(-30, 30);
+                        if (p.dist(ex, ey, pp.cx, pp.cy) < pp.innerR) {
+                            const er = new Ripple(ex, ey, p.random(30, 70), p.random(40, 65), p.random(0.1, 0.3), false);
+                            er.age = p.random(0, 18);
+                            ripples.push(er);
+                        }
+                    }
+                    const foodCount = p.floor(p.random(5, 10));
+                    spawnFoodBatch(mx, my, foodCount, p.random(55, 110));
+                    const hint = document.getElementById('hint');
+                    if (hint) hint.style.opacity = '0';
+                }
+            };
+
+            p.touchStarted = () => {
+                p.mousePressed();
+                if (p.touches.length === 1) {
+                    const pp = getPP();
+                    if (p.dist(p.touches[0].x, p.touches[0].y, pp.cx, pp.cy) < pp.radius) return false;
+                }
+            };
+
+            p.windowResized = () => {
+                const newSize = p.min(750, p.windowWidth - 16, p.windowHeight - 16);
+                p.resizeCanvas(newSize, newSize);
+                adjustParams(newSize);
+                paperTexture = createPaperTexture();
+                renderBg();
+                stones = [];
+                const pp2 = getPP();
+                for (let i = 0; i < 48; i++) {
+                    const a = (i / 48) * p.TWO_PI + p.random(-0.06, 0.06);
+                    stones.push(new Stone(a, p.random(-28, 32)));
+                }
+                for (const dw of duckweeds) {
+                    const a = p.random(p.TWO_PI);
+                    const d = p.random(pp2.radius * 0.75);
+                    dw.initX = pp2.cx + p.cos(a) * d;
+                    dw.initY = pp2.cy + p.sin(a) * d;
+                    dw.x = dw.initX;
+                    dw.y = dw.initY;
+                }
+                for (const koi of koiFish) {
+                    const a = p.random(p.TWO_PI);
+                    const d = p.random(pp2.radius * 0.5);
+                    koi.x = pp2.cx + p.cos(a) * d;
+                    koi.y = pp2.cy + p.sin(a) * d;
+                }
+                fishFoods = [];
+                nextAutoFeedTime = p.frameCount + p.floor(p.random(100, 200));
+            };
+        };
+
+        new p5(sketch);
+    </script>
+</body>
+</html>

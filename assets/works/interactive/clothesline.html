@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>晾衣绳上的床单 · 清新版</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js">
+    </script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #eef2f5;
+            overflow: hidden;
+        }
+        canvas {
+            display: block;
+            width: min(860px, 100vw) !important;
+            height: auto !important;
+            border-radius: 8px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+        }
+    </style>
+</head>
+<body>
+    <script>
+        // ============ 全局变量 ============
+        let clothWhite;
+        let clothRed;
+        let clothSock1;
+        let clothSock2;
+        let birds = [];
+        let clouds = [];
+        let poleLeftX, poleRightX;
+        let poleTopY, groundY, ropeControlY;
+        let ropeP0, ropeP1, ropeP2;
+
+        function setup() {
+            createCanvas(860, 540);
+            pixelDensity(1);
+
+            poleLeftX = 130;
+            poleRightX = 730;
+            poleTopY = 95;
+            groundY = 395;
+            ropeControlY = 175;
+
+            ropeP0 = createVector(poleLeftX, poleTopY);
+            ropeP1 = createVector((poleLeftX + poleRightX) / 2, ropeControlY);
+            ropeP2 = createVector(poleRightX, poleTopY);
+
+            clothWhite = new Cloth(0.18, 0.52, 14, 18, 16, 'white');
+            clothRed = new Cloth(0.55, 0.74, 9, 11, 15, 'red-check');
+            clothSock1 = new Cloth(0.77, 0.84, 4, 10, 13, 'sock', true);
+            clothSock2 = new Cloth(0.86, 0.93, 4, 10, 13, 'sock', true);
+
+            for (let i = 0; i < 5; i++) {
+                birds.push(new Bird(random(150, 700), random(55, 200), random(0.6, 1.3)));
+            }
+
+            for (let i = 0; i < 6; i++) {
+                clouds.push(new Cloud(
+                    random(-50, width + 50),
+                    random(30, 220),
+                    random(0.4, 1.2),
+                    random(35, 90)
+                ));
+            }
+        }
+
+        function draw() {
+            background(255);
+
+            // 1. 清新天空
+            drawSky();
+            drawClouds();
+
+            // 2. 远处电线杆
+            drawDistantPoles();
+
+            // 3. 飞鸟
+            for (let bird of birds) {
+                bird.update();
+                bird.draw();
+            }
+
+            // 4. 清新地面
+            drawGround();
+
+            // 5. 布料更新
+            let time = frameCount * 0.015;
+            clothWhite.updateVertices(time);
+            clothRed.updateVertices(time);
+            clothSock1.updateVertices(time);
+            clothSock2.updateVertices(time);
+
+            // 6. 影子
+            drawAllShadows();
+
+            // 7. 近景杆子
+            drawPoles();
+
+            // 8. 晾衣绳
+            drawClothesline();
+
+            // 9. 布料
+            clothWhite.render();
+            clothRed.render();
+            clothSock1.render();
+            clothSock2.render();
+
+            // 10. 衣夹
+            drawClothespins();
+        }
+
+        // ============ 清新天空 ============
+        function drawSky() {
+            // 明净的淡蓝色渐变，从柔和的蔚蓝到几乎纯白
+            let topColor = color(135, 195, 245);
+            let bottomColor = color(215, 235, 252);
+            for (let y = 0; y < groundY; y++) {
+                let t = map(y, 0, groundY, 0, 1);
+                let c = lerpColor(topColor, bottomColor, t);
+                stroke(c);
+                line(0, y, width, y);
+            }
+            noStroke();
+        }
+
+        // ============ 白云 ============
+        class Cloud {
+            constructor(x, y, speed, size) {
+                this.x = x;
+                this.y = y;
+                this.speed = speed * 0.28;
+                this.size = size;
+                this.puffs = [];
+                let puffCount = floor(random(3, 6));
+                for (let i = 0; i < puffCount; i++) {
+                    this.puffs.push({
+                        offsetX: random(-this.size * 0.5, this.size * 0.5),
+                        offsetY: random(-this.size * 0.25, this.size * 0.25),
+                        radius: random(this.size * 0.3, this.size * 0.65)
+                    });
+                }
+            }
+
+            update() {
+                this.x += this.speed;
+                if (this.x > width + this.size) {
+                    this.x = -this.size;
+                    this.y = random(30, 220);
+                }
+            }
+
+            draw() {
+                push();
+                noStroke();
+                // 蓬松的白色，略带乳白
+                fill(255, 255, 255, 235);
+                for (let puff of this.puffs) {
+                    ellipse(this.x + puff.offsetX, this.y + puff.offsetY,
+                        puff.radius * 2, puff.radius * 1.8);
+                }
+                // 高光层
+                fill(255, 255, 255, 180);
+                for (let puff of this.puffs) {
+                    let hx = this.x + puff.offsetX - puff.radius * 0.15;
+                    let hy = this.y + puff.offsetY - puff.radius * 0.2;
+                    ellipse(hx, hy, puff.radius * 1.2, puff.radius * 1.1);
+                }
+                pop();
+            }
+        }
+
+        function drawClouds() {
+            for (let cloud of clouds) {
+                cloud.update();
+                cloud.draw();
+            }
+        }
+
+        // ============ 清新地面 ============
+        function drawGround() {
+            // 嫩绿色草地，明亮柔和
+            let groundTop = color(165, 200, 125);
+            let groundBottom = color(140, 175, 105);
+            for (let y = groundY; y < height; y++) {
+                let t = map(y, groundY, height, 0, 1);
+                let c = lerpColor(groundTop, groundBottom, t);
+                stroke(c);
+                line(0, y, width, y);
+            }
+            // 地面线
+            stroke(130, 165, 100, 130);
+            strokeWeight(1.5);
+            line(0, groundY, width, groundY);
+            // 浅草纹
+            stroke(145, 180, 110, 90);
+            strokeWeight(1);
+            for (let i = 0; i < 8; i++) {
+                let gx = i * 120 + 20;
+                let gy = groundY + 18 + i * 7;
+                line(gx, gy, gx + 70, gy - 4);
+            }
+            noStroke();
+        }
+
+        // ============ 远处电线杆 ============
+        function drawDistantPoles() {
+            push();
+            let distantPoles = [
+                { x: 60, h: 110, topY: 180 },
+                { x: 200, h: 95, topY: 195 },
+                { x: 580, h: 100, topY: 188 },
+                { x: 780, h: 105, topY: 185 },
+            ];
+            for (let dp of distantPoles) {
+                let baseY = groundY - 5;
+                let topY = baseY - dp.h;
+                stroke(110, 105, 95, 110);
+                strokeWeight(3);
+                line(dp.x, baseY, dp.x, topY);
+                stroke(105, 100, 90, 120);
+                strokeWeight(2);
+                line(dp.x - 18, topY + 12, dp.x + 18, topY + 12);
+                if (dp.x < 300) {
+                    stroke(100, 95, 85, 80);
+                    strokeWeight(0.8);
+                    drawingContext.setLineDash([6, 12]);
+                    line(dp.x, topY + 14, dp.x + 140, topY - 5);
+                    drawingContext.setLineDash([]);
+                }
+            }
+            noStroke();
+            pop();
+        }
+
+        // ============ 近景杆子 ============
+        function drawPoles() {
+            for (let px of [poleLeftX, poleRightX]) {
+                let baseY = groundY + 2;
+                let topY = poleTopY;
+                push();
+                noStroke();
+                // 暖灰木色，更清新
+                let poleColorTop = color(155, 130, 100);
+                let poleColorBottom = color(125, 100, 75);
+                beginShape();
+                fill(poleColorTop);
+                vertex(px - 7, topY);
+                vertex(px + 7, topY);
+                fill(poleColorBottom);
+                vertex(px + 11, baseY);
+                vertex(px - 11, baseY);
+                endShape(CLOSE);
+                fill(140, 115, 85);
+                rect(px - 16, topY - 6, 32, 10, 3);
+                stroke(110, 85, 60, 90);
+                strokeWeight(1);
+                for (let i = 0; i < 3; i++) {
+                    let ty = topY + 20 + i * 55;
+                    line(px - 5, ty, px + 5, ty - 2);
+                }
+                noStroke();
+                pop();
+            }
+        }
+
+        // ============ 晾衣绳 ============
+        function drawClothesline() {
+            push();
+            noFill();
+            stroke(175, 165, 150);
+            strokeWeight(2.5);
+            bezier(ropeP0.x, ropeP0.y, ropeP1.x, ropeP1.y, ropeP1.x, ropeP1.y, ropeP2.x, ropeP2.y);
+            stroke(210, 200, 185, 150);
+            strokeWeight(0.8);
+            bezier(ropeP0.x, ropeP0.y - 1, ropeP1.x, ropeP1.y - 1, ropeP1.x, ropeP1.y - 1, ropeP2.x, ropeP2.y - 1);
+            pop();
+        }
+
+        function getRopePoint(t) {
+            let x = (1 - t) * (1 - t) * ropeP0.x + 2 * (1 - t) * t * ropeP1.x + t * t * ropeP2.x;
+            let y = (1 - t) * (1 - t) * ropeP0.y + 2 * (1 - t) * t * ropeP1.y + t * t * ropeP2.y;
+            return createVector(x, y);
+        }
+
+        // ============ 衣夹 ============
+        function drawClothespins() {
+            let allCloths = [clothWhite, clothRed, clothSock1, clothSock2];
+            for (let cloth of allCloths) {
+                let topRow = cloth.vertices[0];
+                let step = max(1, floor(topRow.length / 5));
+                for (let j = 0; j < topRow.length; j += step) {
+                    let v = topRow[j];
+                    push();
+                    fill(185, 150, 105);
+                    stroke(145, 115, 75);
+                    strokeWeight(1);
+                    rect(v.x - 4, v.y - 3, 8, 10, 2);
+                    stroke(105, 75, 45);
+                    strokeWeight(0.7);
+                    line(v.x - 2, v.y - 1, v.x + 2, v.y - 1);
+                    noStroke();
+                    pop();
+                }
+                if (topRow.length > 1) {
+                    for (let j of [0, topRow.length - 1]) {
+                        let v = topRow[j];
+                        push();
+                        fill(185, 150, 105);
+                        stroke(145, 115, 75);
+                        strokeWeight(1);
+                        rect(v.x - 4, v.y - 3, 8, 10, 2);
+                        stroke(105, 75, 45);
+                        strokeWeight(0.7);
+                        line(v.x - 2, v.y - 1, v.x + 2, v.y - 1);
+                        noStroke();
+                        pop();
+                    }
+                }
+            }
+        }
+
+        function drawAllShadows() {
+            let allCloths = [clothWhite, clothRed, clothSock1, clothSock2];
+            for (let cloth of allCloths) {
+                cloth.renderShadow();
+            }
+        }
+
+        // ============ 布料类 (不变) ============
+        class Cloth {
+            constructor(tStart, tEnd, cols, rows, rowH, type, isSockNarrow = false) {
+                this.tStart = tStart;
+                this.tEnd = tEnd;
+                this.cols = cols;
+                this.rows = rows;
+                this.rowH = rowH;
+                this.type = type;
+                this.isSockNarrow = isSockNarrow;
+                this.vertices = [];
+                for (let r = 0; r < rows; r++) {
+                    this.vertices[r] = [];
+                    for (let c = 0; c < cols; c++) {
+                        this.vertices[r][c] = { x: 0, y: 0 };
+                    }
+                }
+                this.initVertices();
+            }
+
+            initVertices() {
+                for (let c = 0; c < this.cols; c++) {
+                    let t = map(c, 0, this.cols - 1, this.tStart, this.tEnd);
+                    let pt = getRopePoint(t);
+                    this.vertices[0][c].x = pt.x;
+                    this.vertices[0][c].y = pt.y;
+                }
+                for (let r = 1; r < this.rows; r++) {
+                    for (let c = 0; c < this.cols; c++) {
+                        this.vertices[r][c].x = this.vertices[0][c].x;
+                        this.vertices[r][c].y = this.vertices[0][c].y + r * this.rowH;
+                    }
+                }
+            }
+
+            updateVertices(time) {
+                for (let c = 0; c < this.cols; c++) {
+                    let t = map(c, 0, this.cols - 1, this.tStart, this.tEnd);
+                    let pt = getRopePoint(t);
+                    this.vertices[0][c].x = pt.x;
+                    this.vertices[0][c].y = pt.y;
+                }
+
+                let windBase = sin(time * 1.3) * 18 + cos(time * 0.7) * 10;
+                let windGust = sin(time * 2.1 + 1.5) * 8;
+
+                for (let r = 1; r < this.rows; r++) {
+                    let influenceFactor = pow(r / this.rows, 0.7);
+                    let rowPhase = r * 0.35;
+
+                    for (let c = 0; c < this.cols; c++) {
+                        let nx = c * 0.4;
+                        let ny = r * 0.3;
+                        let noiseVal = noise(nx, ny, time * 0.6) - 0.5;
+                        let noiseOffset = noiseVal * 22 * influenceFactor;
+
+                        let sinOffset = sin(time * 1.5 + c * 0.6 + rowPhase) * 14 * influenceFactor;
+                        let sinOffset2 = cos(time * 0.9 + c * 0.35 + rowPhase) * 7 * influenceFactor;
+
+                        let totalOffsetX = (windBase + windGust) * influenceFactor + noiseOffset + sinOffset + sinOffset2;
+
+                        let gravStretch = 1 + influenceFactor * 0.15;
+                        let actualRowH = this.rowH * gravStretch;
+
+                        let aboveV = this.vertices[r - 1][c];
+                        let targetX = aboveV.x + totalOffsetX;
+                        let targetY = aboveV.y + actualRowH;
+
+                        if (this.isSockNarrow && this.type === 'sock') {
+                            let sockMid = floor(this.rows * 0.5);
+                            let sockBottom = this.rows - 1;
+                            let widthMod = 1.0;
+                            if (r > 0 && r < sockMid) {
+                                widthMod = map(r, 0, sockMid, 1.0, 0.55);
+                            } else if (r >= sockMid) {
+                                widthMod = map(r, sockMid, sockBottom, 0.55, 0.75);
+                            }
+                            let centerX = this.vertices[0][floor(this.cols / 2)].x;
+                            targetX = centerX + (targetX - centerX) * widthMod;
+                        }
+
+                        this.vertices[r][c].x = lerp(this.vertices[r][c].x, targetX, 0.6);
+                        this.vertices[r][c].y = lerp(this.vertices[r][c].y, targetY, 0.7);
+                    }
+                }
+
+                for (let r = 1; r < this.rows; r++) {
+                    for (let c = 0; c < this.cols; c++) {
+                        let above = this.vertices[r - 1][c];
+                        let curr = this.vertices[r][c];
+                        let dy = curr.y - above.y;
+                        if (dy > this.rowH * 1.5) curr.y = above.y + this.rowH * 1.5;
+                        if (dy < this.rowH * 0.5) curr.y = above.y + this.rowH * 0.5;
+                    }
+                }
+            }
+
+            getBrightness(r, c, triIndex) {
+                if (this.type === 'white') {
+                    let v = this.vertices[r][c];
+                    let baseV = this.vertices[0][Math.min(c, this.cols - 1)];
+                    let offsetX = v.x - baseV.x;
+                    let brightness = map(offsetX, -20, 25, 0.82, 1.0);
+                    return constrain(brightness, 0.78, 1.0);
+                }
+                return 1.0;
+            }
+
+            getCheckColor(r, c) {
+                if (this.type === 'red-check') {
+                    let checkR = floor(r / 2);
+                    let checkC = floor(c / 1.8);
+                    if ((checkR + checkC) % 2 === 0) {
+                        return color(195, 55, 45);
+                    } else {
+                        return color(252, 248, 240);
+                    }
+                }
+                return color(252, 248, 240);
+            }
+
+            render() {
+                push();
+                noStroke();
+
+                if (this.type === 'white') {
+                    for (let r = 0; r < this.rows - 1; r++) {
+                        for (let c = 0; c < this.cols - 1; c++) {
+                            let v00 = this.vertices[r][c];
+                            let v10 = this.vertices[r][c + 1];
+                            let v01 = this.vertices[r + 1][c];
+                            let v11 = this.vertices[r + 1][c + 1];
+                            let b1 = this.getBrightness(r, c, 0);
+                            let w1 = lerp(235, 255, b1);
+                            fill(w1, w1, w1 - 5);
+                            triangle(v00.x, v00.y, v10.x, v10.y, v01.x, v01.y);
+                            let b2 = this.getBrightness(r, c, 1);
+                            let w2 = lerp(233, 254, b2);
+                            fill(w2, w2, w2 - 4);
+                            triangle(v10.x, v10.y, v11.x, v11.y, v01.x, v01.y);
+                        }
+                    }
+                    stroke(210, 205, 195, 40);
+                    strokeWeight(0.6);
+                    noFill();
+                    for (let r = 0; r < this.rows - 1; r++) {
+                        for (let c = 0; c < this.cols - 1; c++) {
+                            let v00 = this.vertices[r][c];
+                            let v10 = this.vertices[r][c + 1];
+                            let v01 = this.vertices[r + 1][c];
+                            line(v00.x, v00.y, v10.x, v10.y);
+                            line(v00.x, v00.y, v01.x, v01.y);
+                        }
+                    }
+                    noStroke();
+                } else if (this.type === 'red-check') {
+                    for (let r = 0; r < this.rows - 1; r++) {
+                        for (let c = 0; c < this.cols - 1; c++) {
+                            let v00 = this.vertices[r][c];
+                            let v10 = this.vertices[r][c + 1];
+                            let v01 = this.vertices[r + 1][c];
+                            let v11 = this.vertices[r + 1][c + 1];
+                            fill(this.getCheckColor(r, c));
+                            triangle(v00.x, v00.y, v10.x, v10.y, v01.x, v01.y);
+                            triangle(v10.x, v10.y, v11.x, v11.y, v01.x, v01.y);
+                        }
+                    }
+                    stroke(160, 50, 40, 50);
+                    strokeWeight(0.8);
+                    noFill();
+                    for (let r = 0; r < this.rows - 1; r++) {
+                        for (let c = 0; c < this.cols - 1; c++) {
+                            let v00 = this.vertices[r][c];
+                            let v10 = this.vertices[r][c + 1];
+                            line(v00.x, v00.y, v10.x, v10.y);
+                        }
+                    }
+                    noStroke();
+                } else if (this.type === 'sock') {
+                    for (let r = 0; r < this.rows - 1; r++) {
+                        for (let c = 0; c < this.cols - 1; c++) {
+                            let v00 = this.vertices[r][c];
+                            let v10 = this.vertices[r][c + 1];
+                            let v01 = this.vertices[r + 1][c];
+                            let v11 = this.vertices[r + 1][c + 1];
+                            let sockCol;
+                            if (r < 2) {
+                                sockCol = color(80, 85, 95);
+                            } else if (r > this.rows - 4) {
+                                sockCol = color(100, 95, 105);
+                            } else {
+                                sockCol = color(130, 135, 145);
+                            }
+                            fill(sockCol);
+                            triangle(v00.x, v00.y, v10.x, v10.y, v01.x, v01.y);
+                            triangle(v10.x, v10.y, v11.x, v11.y, v01.x, v01.y);
+                        }
+                    }
+                    stroke(65, 67, 72, 60);
+                    strokeWeight(0.5);
+                    noFill();
+                    for (let r = 0; r < this.rows - 1; r++) {
+                        for (let c = 0; c < this.cols - 1; c++) {
+                            let v00 = this.vertices[r][c];
+                            let v10 = this.vertices[r][c + 1];
+                            line(v00.x, v00.y, v10.x, v10.y);
+                        }
+                    }
+                    if (this.vertices.length > 1 && this.vertices[1].length > 1) {
+                        let topV0 = this.vertices[0][0];
+                        let topV1 = this.vertices[0][this.cols - 1];
+                        let sockTopY = (topV0.y + topV1.y) / 2;
+                        stroke(100, 95, 105, 160);
+                        strokeWeight(2.5);
+                        line(topV0.x, sockTopY - 2, topV1.x, sockTopY - 2);
+                        noStroke();
+                    }
+                }
+                pop();
+            }
+
+            renderShadow() {
+                push();
+                noStroke();
+                let shadowAlpha = 50;
+                let shadowOffsetX = 10;
+                let shadowOffsetY = groundY - this.getLowestY() + 8;
+
+                for (let r = 0; r < this.rows - 1; r++) {
+                    for (let c = 0; c < this.cols - 1; c++) {
+                        let v00 = this.vertices[r][c];
+                        let v10 = this.vertices[r][c + 1];
+                        let v01 = this.vertices[r + 1][c];
+                        let v11 = this.vertices[r + 1][c + 1];
+
+                        let s00x = v00.x + shadowOffsetX;
+                        let s00y = constrain(v00.y + shadowOffsetY, groundY + 2, groundY + 35);
+                        let s10x = v10.x + shadowOffsetX;
+                        let s10y = constrain(v10.y + shadowOffsetY, groundY + 2, groundY + 35);
+                        let s01x = v01.x + shadowOffsetX;
+                        let s01y = constrain(v01.y + shadowOffsetY, groundY + 2, groundY + 35);
+                        let s11x = v11.x + shadowOffsetX;
+                        let s11y = constrain(v11.y + shadowOffsetY, groundY + 2, groundY + 35);
+
+                        fill(0, 0, 0, shadowAlpha);
+                        triangle(s00x, s00y, s10x, s10y, s01x, s01y);
+                        triangle(s10x, s10y, s11x, s11y, s01x, s01y);
+
+                        fill(0, 0, 0, shadowAlpha * 0.5);
+                        triangle(s00x + 3, s00y, s10x + 3, s10y, s01x + 3, s01y);
+                        triangle(s10x + 3, s10y, s11x + 3, s11y, s01x + 3, s01y);
+                    }
+                }
+                pop();
+            }
+
+            getLowestY() {
+                let minY = 0;
+                let lastRow = this.vertices[this.rows - 1];
+                for (let v of lastRow) {
+                    if (v.y > minY) minY = v.y;
+                }
+                return minY;
+            }
+        }
+
+        // ============ 飞鸟 ============
+        class Bird {
+            constructor(x, y, speed) {
+                this.x = x;
+                this.y = y;
+                this.baseY = y;
+                this.speed = speed;
+                this.wingPhase = random(TWO_PI);
+                this.wingFreq = random(3.5, 5.5);
+                this.size = random(8, 16);
+                this.direction = 1;
+                if (random() < 0.35) this.direction = -1;
+            }
+
+            update() {
+                this.x += this.speed * this.direction;
+                this.wingPhase += this.wingFreq * 0.06;
+                this.y = this.baseY + sin(this.wingPhase * 0.4) * 12;
+                if (this.direction === 1 && this.x > width + 40) {
+                    this.x = -40;
+                    this.baseY = random(55, 210);
+                }
+                if (this.direction === -1 && this.x < -40) {
+                    this.x = width + 40;
+                    this.baseY = random(55, 210);
+                }
+            }
+
+            draw() {
+                push();
+                let wingAngle = sin(this.wingPhase) * 0.7 + 0.45;
+                let wingLen = this.size * 1.3;
+                fill(65, 60, 50);
+                noStroke();
+                circle(this.x, this.y, this.size * 0.35);
+                stroke(60, 55, 45);
+                strokeWeight(1.8);
+                let lx1 = this.x - cos(wingAngle) * wingLen;
+                let ly1 = this.y - sin(wingAngle) * wingLen;
+                line(this.x, this.y, lx1, ly1);
+                let rx1 = this.x + cos(wingAngle) * wingLen;
+                let ry1 = this.y - sin(wingAngle) * wingLen;
+                line(this.x, this.y, rx1, ry1);
+                noStroke();
+                pop();
+            }
+        }
+
+        function windowResized() {
+            resizeCanvas(860, 540);
+        }
+    </script>
+</body>
+</html>

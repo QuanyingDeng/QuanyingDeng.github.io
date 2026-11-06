@@ -12,7 +12,7 @@ const translations = {
 '现任广东省国防科技技师学院美术讲师、艺术设计教师。':'Fine Arts Lecturer and Art Design Instructor, Guangdong Provincial National Defense Science & Technology Technical School.',
 '进一步了解   About me':'More about me','艺术 · 设计 · 教育   /   ART, DESIGN & EDUCATION':'ART, DESIGN & EDUCATION',
 '创作、实践与观察的持续记录。':'An ongoing collection of creative work, practice and observations.',
-'全部作品':'All Works','个人创作':'Personal Creations','设计作品':'Design Works','非遗手工':'Intangible Heritage Crafts','摄影':'Photography','音乐作品':'Music Works',
+'全部作品':'All Works','个人创作':'Personal Creations','设计作品':'Design Works','非遗手工':'Intangible Heritage Crafts','摄影':'Photography',
 '作品图待补充 / Image forthcoming':'Image forthcoming','实践记录':'Practice notes','新的作品，正在整理。':'More work is being prepared.','该分类暂无公开项目，敬请期待。':'No projects have been published in this category yet.',
 '美术教师，绘画与设计背景。研究兴趣：色彩感知、非遗手工与数字媒介。':'Art educator with a background in painting and design. Research interests: colour perception, heritage crafts and digital media.',
 '美术讲师 · 艺术设计教师':'Fine Arts Lecturer · Art Design Instructor','艺术创作与非遗研究':'Art practice and heritage research interests','从实践出发':'Starting from practice',
@@ -53,6 +53,7 @@ const translations = {
 '课程思政微课、公开课、微课、教师职业能力、微党课及诵读比赛':'Competitions in Curriculum Ideology and Politics Micro-lessons, Open Classes, Micro-lessons, Teaching Competency, Party Micro-lessons and Recitation','学院竞赛':'College competitions',
 '优秀教师、优秀共产党员、三八红旗手、优秀社团指导老师':'Outstanding Teacher, Outstanding Communist Party Member, March 8th Red Banner Bearer and Outstanding Club Advisor','多次获评':'Awarded on multiple occasions',
 '未找到该作品':'Project not found','返回作品项目 ↗':'Back to works ↗','作品图片暂不可用':'Image temporarily unavailable',
+'可交互作品 / Interactive piece':'Interactive piece','创意编程 / Creative Coding':'Creative Coding','全屏打开':'Open full screen',
 '跳转至内容':'Skip to content','菜单 ☰':'Menu ☰','展开导航':'Open navigation','收起导航':'Close navigation','主导航':'Main navigation','作品分类':'Project categories','联系邮箱':'Contact email','邓全颖 首页':'Quanying Deng — Home','邓全颖在海边的生活照':'Quanying Deng by the sea'
 };
 window.PORTFOLIO.projects.forEach((p,i)=>{translations[p.title]=p.en;translations[p.description]=p.descriptionEn || p.description;translations[p.type]=p.type.split(' / ').at(-1);translations['查看'+p.title]='View '+p.en;});

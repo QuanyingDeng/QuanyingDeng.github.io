@@ -26,11 +26,6 @@ window.PORTFOLIO = {
       "photo",
       "摄影",
       "Photography"
-    ],
-    [
-      "music",
-      "音乐作品",
-      "Music Works"
     ]
   ],
   "projects": [
@@ -563,18 +558,18 @@ window.PORTFOLIO = {
     },
     {
       "id": "design-shu-zi",
-      "title": "数字插画",
-      "en": "Digital Illustration",
+      "title": "雪域故事",
+      "en": "Tales of the Snowland",
       "category": "design",
       "year": "设计",
       "type": "设计 / Design",
+      "cover": "assets/works/design/shu-zi-cha-hua/shu-zi-cha-hua-10.jpg",
       "images": [
         "assets/works/design/shu-zi-cha-hua/shu-zi-cha-hua-19.jpg",
         "assets/works/design/shu-zi-cha-hua/shu-zi-cha-hua-01.jpg",
         "assets/works/design/shu-zi-cha-hua/shu-zi-cha-hua-02.jpg",
         "assets/works/design/shu-zi-cha-hua/shu-zi-cha-hua-03.jpg",
         "assets/works/design/shu-zi-cha-hua/shu-zi-cha-hua-04.jpg",
-        "assets/works/design/shu-zi-cha-hua/shu-zi-cha-hua-05.jpg",
         "assets/works/design/shu-zi-cha-hua/shu-zi-cha-hua-06.jpg",
         "assets/works/design/shu-zi-cha-hua/shu-zi-cha-hua-07.jpg",
         "assets/works/design/shu-zi-cha-hua/shu-zi-cha-hua-08.jpg",
@@ -582,23 +577,22 @@ window.PORTFOLIO = {
         "assets/works/design/shu-zi-cha-hua/shu-zi-cha-hua-10.jpg",
         "assets/works/design/shu-zi-cha-hua/shu-zi-cha-hua-11.jpg",
         "assets/works/design/shu-zi-cha-hua/shu-zi-cha-hua-12.jpg",
-        "assets/works/design/shu-zi-cha-hua/shu-zi-cha-hua-13.jpg",
-        "assets/works/design/shu-zi-cha-hua/shu-zi-cha-hua-14.jpg",
         "assets/works/design/shu-zi-cha-hua/shu-zi-cha-hua-15.jpg",
         "assets/works/design/shu-zi-cha-hua/shu-zi-cha-hua-16.jpg",
         "assets/works/design/shu-zi-cha-hua/shu-zi-cha-hua-17.jpg",
         "assets/works/design/shu-zi-cha-hua/shu-zi-cha-hua-18.jpg"
       ],
-      "description": "借助生成式技术探索画面的可能性，再通过后期调整与审美判断让作品落到想要的方向。",
-      "descriptionEn": "Using generative tools to explore visual possibilities, then refining through editing and aesthetic judgment to guide each piece toward its intended direction."
+      "description": "传说丝路的尽头有一座被雪覆盖的城。驼队载着沙与月光出发，翻过鎏金的雪山，在夜半抵达寺院的檐下；壁画里的舞者听见鼓声，便走下来与旅人共舞。这组插画沿着这条想象中的路线展开——大漠、雪原、佛寺与宫廷，四种时差里的风景被同一束金色照亮。它讲的不是某个确定的地方，而是一个被反复讲述、始终未曾抵达的远方。",
+      "descriptionEn": "Legend tells of a city beyond the end of the Silk Road, buried in snow. A caravan sets out carrying sand and moonlight, crosses gilded peaks and reaches the temple eaves at midnight; hearing the drum, a dancer steps down from the mural to dance with the travellers. The series follows this imagined route — desert, snowfield, monastery and court — four landscapes in different hours, lit by the same gold. It is not about one fixed place, but a faraway land told and retold, never quite arrived at."
     },
     {
       "id": "design-yin-zhang",
-      "title": "印章设计",
-      "en": "Seal Design",
+      "title": "驿印 · 广东厅",
+      "en": "Station Seals · Guangdong Pavilion",
       "category": "design",
       "year": "设计",
       "type": "设计 / Design",
+      "cover": "assets/works/design/yin-zhang/yin-zhang-08.png",
       "images": [
         "assets/works/design/yin-zhang/yin-zhang-10.png",
         "assets/works/design/yin-zhang/yin-zhang-01.png",
@@ -611,8 +605,8 @@ window.PORTFOLIO = {
         "assets/works/design/yin-zhang/yin-zhang-08.png",
         "assets/works/design/yin-zhang/yin-zhang-09.png"
       ],
-      "description": "在方寸之间经营构图，让传统印章在当下的纸面上继续呼吸。",
-      "descriptionEn": "Composing within a tiny square — giving traditional seals new breath on today’s paper."
+      "description": "为世界技能大赛广东厅的非遗展示设计一套集章印：观众沿展线行走，在每一站钤下一枚印，朱色层层叠成一条属于自己的参观路径。印章既是纪念，也是动线——方寸之间，把非遗技艺转译成可以被带走的凭证。",
+      "descriptionEn": "A stamp-collecting seal series for the intangible-heritage display at the WorldSkills Guangdong Pavilion: visitors walk the exhibition route and press a seal at every stop, so the vermilion marks accumulate into a personal path through the hall. The seals are souvenirs and wayfinding at once — small squares that turn heritage craft into something a visitor can carry away."
     },
     {
       "id": "design-logo",
@@ -629,6 +623,39 @@ window.PORTFOLIO = {
       ],
       "description": "从字形到图形，让一个符号承载完整的气质。",
       "descriptionEn": "From letterforms to marks — one symbol carrying a full personality."
+    },
+    {
+      "id": "design-koi-pond",
+      "title": "子非鱼",
+      "en": "You Are Not a Fish",
+      "category": "design",
+      "year": "2026",
+      "type": "交互设计 / Interactive",
+      "interactive": true,
+      "priority": 0,
+      "images": [
+        "assets/works/interactive/koi-pond-cover.jpg"
+      ],
+      "embed": "assets/works/interactive/koi-pond.html",
+      "embedRatio": "1 / 1",
+      "description": "「子非鱼，安知鱼之乐」——庄子把这个问题留在濠梁的水面上，两千多年没有答案。此处我把它交给算法：以留白为水，以笔触为鱼，以食粒作为唯一的因果。屏幕是一方池塘，也是观者的镜面：你按下水面，涟漪便替你作答——你并不知道鱼是否快乐，你只知道自己的手曾在那里停了一下。作品不给结局，只给一个可以反复撒食、反复自问的场所：我们究竟是在喂鱼，还是在喂自己那点不肯承认的期待？",
+      "descriptionEn": "\"You are not a fish — how do you know the joy of fish?\" Zhuangzi left that question on the water beneath the Hao bridge, and it has gone unanswered for two thousand years. Here I hand it to an algorithm: blank space for water, brushstrokes for fish, feed as the only cause and effect. The screen is a pond, and also a mirror for the viewer: you press the surface, and the ripples answer on your behalf — you still cannot know whether the fish are happy, only that your hand paused there. The piece offers no conclusion, only a place to scatter feed and ask again: are we feeding the fish, or feeding that small expectation in ourselves we would rather not admit?"
+    },
+    {
+      "id": "design-clothesline",
+      "title": "午后",
+      "en": "Afternoon",
+      "category": "design",
+      "year": "2026",
+      "type": "创意编程 / Creative Coding",
+      "priority": 1,
+      "images": [
+        "assets/works/interactive/clothesline-cover.jpg"
+      ],
+      "embed": "assets/works/interactive/clothesline.html",
+      "embedRatio": "860 / 540",
+      "description": "午后三点，阳光把晾衣绳晒得温热，床单还带着一点水的重量。风从巷口来，把布吹成一个又一个形状：鼓起来，落下去，再鼓起来——每一次都不是重复，而是风和布一起商量出的新样子。太阳走低，水汽慢慢散开，褶皱停在最后一道弧线里，像午后留在布上的签名。所谓晾晒，也许就是这样：看似在等风把水带走，其实是在风里一次次舒展，把重量交给阳光，然后变得更轻、更柔软。",
+      "descriptionEn": "Three in the afternoon: the line is warm with sun, and the sheets still carry a little weight of water. Wind comes from the end of the alley and gives the cloth one shape after another — swelling, falling, swelling again. None of it is repetition; each lift is a new shape the wind and the cloth work out together. As the sun drops, the water slowly lifts away, and the folds settle into one last curve, like a signature the afternoon leaves on the fabric. Perhaps drying is like this: it looks like waiting for the wind to take the water away, but really it is learning to open again and again — handing the weight to the light, and becoming lighter and softer."
     }
   ],
   "honors": [
